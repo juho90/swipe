@@ -41,11 +41,11 @@ export default class Board {
         return this.find(y / this.cell, x / this.cell);
     }
 
-    public draw(canvas: CanvasRenderingContext2D): void {
+    public draw(ctx: CanvasRenderingContext2D): void {
         this.bricks.forEach(line => {
             line.forEach(brick => {
                 if (brick != null) {
-                    brick.draw(canvas);
+                    brick.draw(ctx);
                 }
             });
         });

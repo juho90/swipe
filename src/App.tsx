@@ -1,10 +1,18 @@
 import * as React from 'react';
+import { setTimeout } from 'timers';
 import './App.css';
-import Ball from './ball';
-import Board from './board';
-import { CollisionBrickWithBall } from './mymath';
+import Board from './game/board';
+import {
+  Clockwise,
+  collisionBoardWithBall,
+  collisionBrickWithBall
+}
+  from './game/mymath';
+import Tengnamball from './game/tengnamball';
 
 interface IState {
+  dtime: number;
+  etime: number;
   width: number;
   height: number;
   ratio: number;
@@ -13,11 +21,13 @@ interface IState {
 class App extends React.Component<{}, IState> {
   private canvas: HTMLCanvasElement | null;
   private board: Board;
-  private ball: Ball;
+  private tball: Tengnamball;
 
   constructor(props: any) {
     super(props);
     this.state = {
+      dtime: 0,
+      etime: 0,
       height: 800,
       ratio: 1,
       width: 600,
@@ -25,19 +35,20 @@ class App extends React.Component<{}, IState> {
   }
 
   public componentDidMount(): void {
-    const cell = 40.0;
+    const cell = 40;
     this.board = new Board(
       this.state.width / cell,
       this.state.height / cell,
       cell);
-    this.ball = new Ball(0, 0, cell / 2);
+    this.tball = new Tengnamball(0, 0, cell / 8);
+    this.tball.setDir(3, 5);
     this.board.addMany([
       { x: 1, y: 1 },
     ]);
     this.updateCanvas();
   }
 
-  public componentDidUpdate(): void {
+  public componentWillUpdate(): void {
     this.updateCanvas();
   }
 
@@ -49,16 +60,49 @@ class App extends React.Component<{}, IState> {
     if (ctx == null) {
       return;
     }
+    this.tball.move(this.state.dtime);
     this.board.bricks.forEach(line => {
       line.forEach(brick => {
         if (brick == null) {
           return;
         }
-        CollisionBrickWithBall(brick, this.ball);
+        const result = collisionBrickWithBall(brick, this.tball.ball);
+        if (result.hit) {
+          switch (result.cw) {
+            case Clockwise.NONE:
+              this.tball.dir.reverse();
+              break;
+            case Clockwise.TRUE:
+              this.tball.dir.reverseXAsix();
+              break;
+            case Clockwise.ANTI:
+              this.tball.dir.reverseYAsix();
+              break;
+          }
+        }
       });
     });
+    const over = collisionBoardWithBall(this.state.width, this.state.height, this.tball.ball);
+    if (over.overW) {
+      this.tball.dir.x = over.overW * Math.abs(this.tball.dir.x);
+    }
+    if (over.overH) {
+      this.tball.dir.y = over.overH * Math.abs(this.tball.dir.y);
+    }
+    ctx.clearRect(0, 0, this.state.width, this.state.height);
     this.board.draw(ctx);
-    this.ball.draw(ctx);
+    this.tball.draw(ctx);
+    this.updateTime(30 / 1000);
+  }
+
+  public updateTime(dTime: number): void {
+    setTimeout((args: any[]) => {
+      const app: App = args[0];
+      app.setState({
+        dtime: dTime,
+        etime: app.state.etime + dTime
+      });
+    }, dTime, [this]);
   }
 
   public render(): JSX.Element {

@@ -11,10 +11,10 @@ export default class Brick {
 		this.h = h;
 	}
 
-	public draw(canvas: CanvasRenderingContext2D): void {
-		canvas.beginPath();
-		canvas.rect(this.x, this.y, this.w, this.h);
-		canvas.fill();
-		canvas.stroke();
+	public draw(ctx: CanvasRenderingContext2D): void {
+		ctx.beginPath();
+		ctx.rect(this.x, this.y, this.w, this.h);
+		ctx.fill();
+		ctx.stroke();
 	}
 }
