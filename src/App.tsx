@@ -42,24 +42,22 @@ class App extends React.Component<{}, IState> {
       cell);
     this.tball = new Tengnamball(0, 0, cell / 8);
     this.tball.setDir(3, 5);
-    this.board.addMany([
-      { x: 1, y: 1 },
-    ]);
+    const brickAmount = 20 + Math.floor(Math.random() * 10);
+    for (let i = 0; i < brickAmount; ++i) {
+      this.board.add(
+        Math.floor(Math.random() * this.state.width / cell),
+        Math.floor(Math.random() * this.state.height / cell));
+    }
     this.updateCanvas();
   }
 
   public componentWillUpdate(): void {
+    this.updateCollision();
     this.updateCanvas();
+    this.updateTime(30 / 1000);
   }
 
-  public updateCanvas(): void {
-    if (this.canvas == null) {
-      return;
-    }
-    const ctx = this.canvas.getContext('2d');
-    if (ctx == null) {
-      return;
-    }
+  public updateCollision(): void {
     this.tball.move(this.state.dtime);
     this.board.bricks.forEach(line => {
       line.forEach(brick => {
@@ -89,10 +87,6 @@ class App extends React.Component<{}, IState> {
     if (over.overH) {
       this.tball.dir.y = over.overH * Math.abs(this.tball.dir.y);
     }
-    ctx.clearRect(0, 0, this.state.width, this.state.height);
-    this.board.draw(ctx);
-    this.tball.draw(ctx);
-    this.updateTime(30 / 1000);
   }
 
   public updateTime(dTime: number): void {
@@ -103,6 +97,19 @@ class App extends React.Component<{}, IState> {
         etime: app.state.etime + dTime
       });
     }, dTime, [this]);
+  }
+
+  public updateCanvas(): void {
+    if (this.canvas == null) {
+      return;
+    }
+    const ctx = this.canvas.getContext('2d');
+    if (ctx == null) {
+      return;
+    }
+    ctx.clearRect(0, 0, this.state.width, this.state.height);
+    this.board.draw(ctx);
+    this.tball.draw(ctx);
   }
 
   public render(): JSX.Element {

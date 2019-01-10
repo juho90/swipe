@@ -22,7 +22,7 @@ export default class Board {
     }
 
     public add(cellx: number, celly: number): void {
-        this.bricks[cellx][celly] = new Brick(
+        this.bricks[celly][cellx] = new Brick(
             cellx * this.cell,
             celly * this.cell,
             this.cell,
