@@ -69,7 +69,8 @@ const MyMath = {
         return (sq <= (ball.r * ball.r));
     },
     distanceBrickWithBall: (brick: Brick, ball: Ball): Vec2 => {
-        return new Vec2(Math.abs((ball.x + ball.r) - (brick.x + brick.w / 2)),
+        return new Vec2(
+            Math.abs((ball.x + ball.r) - (brick.x + brick.w / 2)),
             Math.abs((ball.y + ball.r) - (brick.y + brick.h / 2)));
     },
     genRandomNumbers: (count: number, min: number, max: number): number[] => {
