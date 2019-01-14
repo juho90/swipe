@@ -19,24 +19,24 @@ export default class Board {
         this.h = h;
     }
 
-    public add(cellx: number, celly: number): void {
-        this.bricks[celly][cellx] = new Brick(
-            cellx * this.cell,
-            celly * this.cell,
-            this.cell,
-            this.cell);
+    public add<T extends Brick = Brick>(brick: T, cellx: number, celly: number): void {
+        brick.x = cellx * this.cell;
+        brick.y = celly * this.cell;
+        brick.w = this.cell;
+        brick.h = this.cell;
+        this.bricks[celly][cellx] = brick;
     }
 
     public remove(cellx: number, celly: number): void {
         this.bricks[celly][cellx] = null;
     }
 
-    public find(cellx: number, celly: number): Brick | null {
-        return this.bricks[celly][cellx];
+    public find<T extends Brick = Brick>(cellx: number, celly: number): T | null {
+        return this.bricks[celly][cellx] as T;
     }
 
-    public detect(x: number, y: number): Brick | null {
-        return this.find(y / this.cell, x / this.cell);
+    public detect<T extends Brick = Brick>(x: number, y: number): T | null {
+        return this.find<T>(y / this.cell, x / this.cell);
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {

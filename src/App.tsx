@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { setTimeout } from 'timers';
 import './App.css';
+import BreakableBrick from './game/breakablebrick';
 import FlowdownBoard from './game/flowdownboard';
 import MyMath, { Clockwise } from './game/mymath';
 import Tengnamball from './game/tengnamball';
@@ -62,6 +63,7 @@ class App extends React.Component<{}, IState> {
         }
         const result = MyMath.collisionBrickWithBall(brick, this.tball.ball);
         if (result.hit) {
+          (brick as BreakableBrick).break();
           switch (result.cw) {
             case Clockwise.NONE:
               this.tball.dir.reverse();

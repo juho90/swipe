@@ -1,4 +1,5 @@
 import Board from './board';
+import BreakableBrick from './breakablebrick';
 import MyMath from './mymath';
 
 export default class FlowdownBoard extends Board {
@@ -8,7 +9,7 @@ export default class FlowdownBoard extends Board {
             1 + Math.floor(Math.random() * (this.w - 1)),
             0, this.w);
         lines.forEach(element => {
-            this.add(element, 0);
+            this.add(new BreakableBrick(1), element, 0);
         });
     }
 
