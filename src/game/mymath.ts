@@ -89,3 +89,21 @@ export function getClockwise(x1: number, y1: number, x2: number, y2: number): Cl
         return Clockwise.ANTI;
     }
 }
+
+export function genRandomNumbers(count: number, min: number, max: number): number[] {
+    const line: number[] = [];
+    const limit = max - min;
+    if (limit < count) {
+        throw new Error("invalid (max - min) < count");
+    }
+    for (let index = 0; index < count;) {
+        const value = min + Math.floor((Math.random() * limit));
+        if (line.find((element: number) => {
+            return element === value;
+        }) === undefined) {
+            ++index;
+            line.push(value);
+        }
+    }
+    return line;
+}

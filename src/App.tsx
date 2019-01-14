@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { setTimeout } from 'timers';
 import './App.css';
-import Board from './game/board';
+import FlowdownBoard from './game/flowdownboard';
 import {
   Clockwise,
   collisionBoardWithBall,
   collisionBrickWithBall
-}
-  from './game/mymath';
+} from './game/mymath';
 import Tengnamball from './game/tengnamball';
 
 interface IState {
@@ -20,7 +19,7 @@ interface IState {
 
 class App extends React.Component<{}, IState> {
   private canvas: HTMLCanvasElement | null;
-  private board: Board;
+  private board: FlowdownBoard;
   private tball: Tengnamball;
 
   constructor(props: any) {
@@ -36,19 +35,20 @@ class App extends React.Component<{}, IState> {
 
   public componentDidMount(): void {
     const cell = 40;
-    this.board = new Board(
+    this.board = new FlowdownBoard(
       this.state.width / cell,
       this.state.height / cell,
       cell);
     this.tball = new Tengnamball(0, 0, cell / 8);
     this.tball.setDir(3, 5);
-    const brickAmount = 20 + Math.floor(Math.random() * 10);
+    const brickAmount = 10 + Math.floor(Math.random() * (this.board.h - 10));
     for (let i = 0; i < brickAmount; ++i) {
-      this.board.add(
-        Math.floor(Math.random() * this.state.width / cell),
-        Math.floor(Math.random() * this.state.height / cell));
+      this.board.genFlowdown();
     }
-    this.updateCanvas();
+    this.board.flowdown();
+    this.board.flowdown();
+    this.board.flowdown();
+    this.updateTime(30 / 1000);
   }
 
   public componentWillUpdate(): void {

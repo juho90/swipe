@@ -3,6 +3,8 @@ import Brick from './brick';
 export default class Board {
     public bricks: Array<Array<Brick | null>>;
     public cell: number;
+    public w: number;
+    public h: number;
 
     constructor(w: number, h: number, cell: number) {
         this.bricks = [];
@@ -13,12 +15,8 @@ export default class Board {
             }
         }
         this.cell = cell;
-    }
-
-    public addMany(list: any[]): void {
-        list.forEach(element => {
-            this.add(element.x, element.y);
-        });
+        this.w = w;
+        this.h = h;
     }
 
     public add(cellx: number, celly: number): void {
