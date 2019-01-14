@@ -1,10 +1,10 @@
 import Board from './board';
-import { genRandomNumbers } from './mymath';
+import MyMath from './mymath';
 
 export default class FlowdownBoard extends Board {
     public genFlowdown(): void {
         this.flowdown();
-        const lines = genRandomNumbers(
+        const lines = MyMath.genRandomNumbers(
             1 + Math.floor(Math.random() * (this.w - 1)),
             0, this.w);
         lines.forEach(element => {

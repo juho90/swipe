@@ -2,11 +2,7 @@ import * as React from 'react';
 import { setTimeout } from 'timers';
 import './App.css';
 import FlowdownBoard from './game/flowdownboard';
-import {
-  Clockwise,
-  collisionBoardWithBall,
-  collisionBrickWithBall
-} from './game/mymath';
+import MyMath, { Clockwise } from './game/mymath';
 import Tengnamball from './game/tengnamball';
 
 interface IState {
@@ -64,7 +60,7 @@ class App extends React.Component<{}, IState> {
         if (brick == null) {
           return;
         }
-        const result = collisionBrickWithBall(brick, this.tball.ball);
+        const result = MyMath.collisionBrickWithBall(brick, this.tball.ball);
         if (result.hit) {
           switch (result.cw) {
             case Clockwise.NONE:
@@ -80,7 +76,7 @@ class App extends React.Component<{}, IState> {
         }
       });
     });
-    const over = collisionBoardWithBall(this.state.width, this.state.height, this.tball.ball);
+    const over = MyMath.collisionBoardWithBall(this.state.width, this.state.height, this.tball.ball);
     if (over.overW) {
       this.tball.dir.x = over.overW * Math.abs(this.tball.dir.x);
     }
