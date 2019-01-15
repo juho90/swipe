@@ -1,6 +1,6 @@
-import Board from './board';
+import Board from '../board';
+import MyMath from '../mymath';
 import BreakableBrick from './breakablebrick';
-import MyMath from './mymath';
 
 export default class FlowdownBoard extends Board {
     public genFlowdown(): void {

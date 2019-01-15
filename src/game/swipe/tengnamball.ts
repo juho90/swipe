@@ -1,5 +1,5 @@
-import Ball from './ball';
-import Vec2 from './vec2';
+import Ball from '../ball';
+import Vec2 from '../vec2';
 
 export default class Tengnamball extends Ball {
     public dir: Vec2;
@@ -14,8 +14,8 @@ export default class Tengnamball extends Ball {
         this.dir.y = y;
     }
 
-    public move(dTime: number) {
-        this.x += this.dir.x * dTime;
-        this.y += this.dir.y * dTime;
+    public move(dtime: number) {
+        this.x += this.dir.x * dtime;
+        this.y += this.dir.y * dtime;
     }
 }
