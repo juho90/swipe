@@ -46,7 +46,7 @@ class App extends React.Component<{}, IState> {
 
   public onClickHandler(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
     e.preventDefault();
-    this.game.start(e.pageX, e.pageY);
+    this.game.start(e.clientX, e.clientY);
   }
 
   public render(): JSX.Element {

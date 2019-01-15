@@ -56,7 +56,7 @@ export default class Machinegun {
     
     public shotTarget(fps: number, x: number, y:number): void {
         this.dir.x = x - this.x;
-        this.dir.y = y - this.x;
+        this.dir.y = y - this.y;
         this.dir.nomalize();
         this.dir.multiply(40);
         this.timer = 1 / fps;
