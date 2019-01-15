@@ -1,12 +1,11 @@
 import Ball from './ball';
 import Vec2 from './vec2';
 
-export default class Tengnamball {
-    public ball: Ball;
+export default class Tengnamball extends Ball {
     public dir: Vec2;
 
-    constructor(x: number, y: number, r: number) {
-        this.ball = new Ball(x, y, r);
+    constructor(r: number = 0, x: number = 0, y: number = 0) {
+        super(r, x, y);
         this.dir = new Vec2;
     }
 
@@ -16,11 +15,7 @@ export default class Tengnamball {
     }
 
     public move(dTime: number) {
-        this.ball.x += this.dir.x * dTime;
-        this.ball.y += this.dir.y * dTime;
-    }
-
-    public draw(ctx: CanvasRenderingContext2D) {
-        this.ball.draw(ctx);
+        this.x += this.dir.x * dTime;
+        this.y += this.dir.y * dTime;
     }
 }

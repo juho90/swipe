@@ -3,8 +3,8 @@ import Brick from './brick';
 export default class BreakableBrick extends Brick {
     public skin: number;
 
-    constructor(skin: number, x: number = 0, y: number = 0, w: number = 0, h: number = 0) {
-        super(x, y, w, h);
+    constructor(skin: number, w: number = 0, h: number = 0, x: number = 0, y: number = 0) {
+        super(w, h, x, y);
         this.skin = skin;
     }
 

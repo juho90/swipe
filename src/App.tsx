@@ -3,8 +3,8 @@ import { setTimeout } from 'timers';
 import './App.css';
 import BreakableBrick from './game/breakablebrick';
 import FlowdownBoard from './game/flowdownboard';
+import Machinegun from './game/machinegun';
 import MyMath, { Clockwise } from './game/mymath';
-import Tengnamball from './game/tengnamball';
 
 interface IState {
   dtime: number;
@@ -17,7 +17,7 @@ interface IState {
 class App extends React.Component<{}, IState> {
   private canvas: HTMLCanvasElement | null;
   private board: FlowdownBoard;
-  private tball: Tengnamball;
+  private gun: Machinegun;
 
   constructor(props: any) {
     super(props);
@@ -36,8 +36,11 @@ class App extends React.Component<{}, IState> {
       this.state.width / cell,
       this.state.height / cell,
       cell);
-    this.tball = new Tengnamball(0, 0, cell / 8);
-    this.tball.setDir(3, 5);
+    this.gun = new Machinegun;
+    this.gun.setPos(0, 0);
+    this.gun.setMM(cell / 8);
+    this.gun.setMagazine(20);
+    this.gun.shot(3, Math.PI * 1.7);
     const brickAmount = 10 + Math.floor(Math.random() * (this.board.h - 10));
     for (let i = 0; i < brickAmount; ++i) {
       this.board.genFlowdown();
@@ -55,36 +58,40 @@ class App extends React.Component<{}, IState> {
   }
 
   public updateCollision(): void {
-    this.tball.move(this.state.dtime);
+    this.gun.update(this.state.dtime);
     this.board.bricks.forEach(line => {
       line.forEach(brick => {
         if (brick == null) {
           return;
         }
-        const result = MyMath.collisionBrickWithBall(brick, this.tball.ball);
-        if (result.hit) {
-          (brick as BreakableBrick).break();
-          switch (result.cw) {
-            case Clockwise.NONE:
-              this.tball.dir.reverse();
-              break;
-            case Clockwise.TRUE:
-              this.tball.dir.reverseXAsix();
-              break;
-            case Clockwise.ANTI:
-              this.tball.dir.reverseYAsix();
-              break;
+        this.gun.balls.forEach(element => {
+          const result = MyMath.collisionBrickWithBall(brick, element);
+          if (result.hit) {
+            (brick as BreakableBrick).break();
+            switch (result.cw) {
+              case Clockwise.NONE:
+                element.dir.reverse();
+                break;
+              case Clockwise.TRUE:
+                element.dir.reverseXAsix();
+                break;
+              case Clockwise.ANTI:
+                element.dir.reverseYAsix();
+                break;
+            }
           }
-        }
+        });
       });
     });
-    const over = MyMath.collisionBoardWithBall(this.state.width, this.state.height, this.tball.ball);
-    if (over.overW) {
-      this.tball.dir.x = over.overW * Math.abs(this.tball.dir.x);
-    }
-    if (over.overH) {
-      this.tball.dir.y = over.overH * Math.abs(this.tball.dir.y);
-    }
+    this.gun.balls.forEach(element => {
+      const over = MyMath.collisionBoardWithBall(this.state.width, this.state.height, element);
+      if (over.overW) {
+        element.dir.x = over.overW * Math.abs(element.dir.x);
+      }
+      if (over.overH) {
+        element.dir.y = over.overH * Math.abs(element.dir.y);
+      }
+    });
   }
 
   public updateTime(dTime: number): void {
@@ -107,7 +114,7 @@ class App extends React.Component<{}, IState> {
     }
     ctx.clearRect(0, 0, this.state.width, this.state.height);
     this.board.draw(ctx);
-    this.tball.draw(ctx);
+    this.gun.draw(ctx);
   }
 
   public render(): JSX.Element {

@@ -1,12 +1,12 @@
 export default class Ball {
+    public r: number;
     public x: number;
     public y: number;
-    public r: number;
 
-    constructor(x: number, y: number, r: number) {
+    constructor(r: number = 0, x: number = 0, y: number = 0) {
+        this.r = r;
         this.x = x;
         this.y = y;
-        this.r = r;
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {

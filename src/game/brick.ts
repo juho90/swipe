@@ -1,14 +1,14 @@
 export default class Brick {
-	public x: number;
-	public y: number;
 	public w: number;
 	public h: number;
+	public x: number;
+	public y: number;
 
-	constructor(x: number = 0, y: number = 0, w: number = 0, h: number = 0) {
-		this.x = x;
-		this.y = y;
+	constructor(w: number = 0, h: number = 0, x: number = 0, y: number = 0) {
 		this.w = w;
 		this.h = h;
+		this.x = x;
+		this.y = y;
 	}
 
 	public draw(ctx: CanvasRenderingContext2D): void {

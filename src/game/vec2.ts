@@ -22,6 +22,11 @@ export default class Vec2 {
         this.y /= length;
     }
 
+    public angle(radian: number): void {
+        this.x = Math.cos(radian);
+        this.y = Math.sin(radian);
+    }
+
     public rotate(radian: number): void {
         const rX = this.x * Math.cos(radian) - this.y * Math.sin(radian);
         const rY = this.x * Math.sin(radian) + this.y * Math.cos(radian);
