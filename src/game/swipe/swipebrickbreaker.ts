@@ -25,8 +25,28 @@ export default class SwipeBrickBreaker {
         }
     }
 
+    public checkLimitLine(): boolean {
+        return this.board.bricks[this.board.h - 1].find((element) => {
+            return element !== null;
+        }) !== undefined;
+    }
+
+    public checkMovingBall(): boolean {
+        return this.gun.balls.find((element): boolean => {
+            return 0 < element.dir.x || 0 < element.dir.y;
+        }) !== undefined;
+    }
+
+    public ready(): void {
+        this.gun.reload();
+    }
+
     public start(dirX: number, dirY: number): void {
         this.gun.shotTarget(3, dirX, dirY);
+    }
+
+    public next(): void {
+        this.board.genFlowdown();
     }
 
     public update(dtime: number): void {
