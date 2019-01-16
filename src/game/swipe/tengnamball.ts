@@ -9,12 +9,17 @@ export default class Tengnamball extends Ball {
         this.dir = new Vec2;
     }
 
-    public setDir(x: number, y: number) {
+    public move(x: number, y: number): void {
         this.dir.x = x;
         this.dir.y = y;
     }
 
-    public move(dtime: number) {
+    public stop(): void {
+        this.dir.x = 0;
+        this.dir.y = 0;
+    }
+
+    public update(dtime: number): void {
         this.x += this.dir.x * dtime;
         this.y += this.dir.y * dtime;
     }

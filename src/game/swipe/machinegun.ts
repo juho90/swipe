@@ -50,11 +50,11 @@ export default class Machinegun {
         this.balls.forEach(element => {
             element.x = this.x;
             element.y = this.y;
-            element.setDir(this.dir.x, this.dir.y);
+            element.move(this.dir.x, this.dir.y);
         });
     }
-    
-    public shotTarget(fps: number, x: number, y:number): void {
+
+    public shotTarget(fps: number, x: number, y: number): void {
         this.dir.x = x - this.x;
         this.dir.y = y - this.y;
         this.dir.nomalize();
@@ -65,7 +65,7 @@ export default class Machinegun {
         this.balls.forEach(element => {
             element.x = this.x;
             element.y = this.y;
-            element.setDir(this.dir.x, this.dir.y);
+            element.move(this.dir.x, this.dir.y);
         });
     }
 
@@ -75,7 +75,7 @@ export default class Machinegun {
         this.balls.forEach(element => {
             element.x = this.x;
             element.y = this.y;
-            element.setDir(0, 0);
+            element.stop();
         });
     }
 
@@ -86,7 +86,7 @@ export default class Machinegun {
             this.count = Math.min(this.count + 1, this.balls.length);
         }
         for (let index = 0; index < this.count; ++index) {
-            this.balls[index].move(dtime);
+            this.balls[index].update(dtime);
         }
     }
 

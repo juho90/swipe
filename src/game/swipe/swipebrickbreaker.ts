@@ -17,7 +17,7 @@ export default class SwipeBrickBreaker {
         this.gun.setMM(cell / 8);
         this.gun.setPos(
             (w / 2) + this.gun.r,
-            h - ((this.gun.r * 2) + 1));
+            h - ((this.gun.r * 2) + 3));
         this.gun.setMagazine(20);
         const brickAmount = 10 + Math.floor(Math.random() * (this.board.h - 13));
         for (let i = 0; i < brickAmount; ++i) {
@@ -26,7 +26,7 @@ export default class SwipeBrickBreaker {
     }
 
     public start(dirX: number, dirY: number): void {
-        this.gun.shotTarget(5, dirX, dirY);
+        this.gun.shotTarget(3, dirX, dirY);
     }
 
     public update(dtime: number): void {
@@ -57,11 +57,16 @@ export default class SwipeBrickBreaker {
         });
         this.gun.balls.forEach(element => {
             const over = MyMath.collisionBoardWithBall(this.w, this.h, element);
-            if (over.overW) {
-                element.dir.x = over.overW * Math.abs(element.dir.x);
+            if (over.overH === -1) {
+                element.stop();
             }
-            if (over.overH) {
-                element.dir.y = over.overH * Math.abs(element.dir.y);
+            else {
+                if (over.overW) {
+                    element.dir.x = over.overW * Math.abs(element.dir.x);
+                }
+                if (over.overH) {
+                    element.dir.y = over.overH * Math.abs(element.dir.y);
+                }
             }
         });
     }
