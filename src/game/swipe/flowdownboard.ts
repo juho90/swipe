@@ -3,13 +3,13 @@ import MyMath from '../mymath';
 import BreakableBrick from './breakablebrick';
 
 export default class FlowdownBoard extends Board {
-    public genFlowdown(): void {
+    public genFlowdown(skin: number): void {
         this.flowdown();
         const lines = MyMath.genRandomNumbers(
             1 + Math.floor(Math.random() * (this.w - 1)),
             0, this.w);
         lines.forEach(element => {
-            this.add(new BreakableBrick(1), element, 0);
+            this.add(new BreakableBrick(skin), element, 0);
         });
     }
 

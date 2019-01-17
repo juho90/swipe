@@ -19,10 +19,6 @@ export default class SwipeBrickBreaker {
             (w / 2) + this.gun.r,
             h - ((this.gun.r * 2) + 3));
         this.gun.setMagazine(20);
-        const brickAmount = 10 + Math.floor(Math.random() * (this.board.h - 13));
-        for (let i = 0; i < brickAmount; ++i) {
-            this.board.genFlowdown();
-        }
     }
 
     public checkLimitLine(): boolean {
@@ -33,7 +29,7 @@ export default class SwipeBrickBreaker {
 
     public checkMovingBall(): boolean {
         return this.gun.balls.find((element): boolean => {
-            return 0 < element.dir.x || 0 < element.dir.y;
+            return element.dir.x !== 0 || element.dir.y !== 0;
         }) !== undefined;
     }
 

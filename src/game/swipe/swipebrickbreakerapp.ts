@@ -2,13 +2,16 @@ import FiniteStateMachine from '../finitestatemachine';
 import SwipeBrickBreaker from './swipebrickbreaker';
 
 export default class SwipeBrickBreakerApp {
+    public level: number;
     public swipe: SwipeBrickBreaker;
     public fsm: FiniteStateMachine;
     public endGame: boolean;
     public dtime: number;
 
     public init(w: number, h: number, cell: number): void {
+        this.level = 1;
         this.swipe = new SwipeBrickBreaker(w, h, cell);
+        this.swipe.board.genFlowdown(this.level);
         this.fsm = new FiniteStateMachine;
         this.fsm.onEnterState = this.onEnterState.bind(this);
         this.fsm.register("ready", this.ready.bind(this));
@@ -72,7 +75,7 @@ export default class SwipeBrickBreakerApp {
             this.fsm.set("end");
         }
         else {
-            this.swipe.board.genFlowdown();
+            this.swipe.board.genFlowdown(++this.level);
             this.fsm.set("ready");
         }
     }
