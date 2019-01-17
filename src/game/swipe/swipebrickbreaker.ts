@@ -37,18 +37,6 @@ export default class SwipeBrickBreaker {
         }) !== undefined;
     }
 
-    public ready(): void {
-        this.gun.reload();
-    }
-
-    public start(dirX: number, dirY: number): void {
-        this.gun.shotTarget(3, dirX, dirY);
-    }
-
-    public next(): void {
-        this.board.genFlowdown();
-    }
-
     public update(dtime: number): void {
         this.gun.update(dtime);
         this.board.bricks.forEach(line => {

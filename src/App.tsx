@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { setTimeout } from 'timers';
 import './App.css';
-import SwipeBrickBreaker from './game/swipe/swipebrickbreaker';
+import SwipeBrickBreakerApp from './game/swipe/swipebrickbreakerapp';
 
 interface IState {
   etime: number;
@@ -12,7 +12,7 @@ interface IState {
 
 class App extends React.Component<{}, IState> {
   public canvas: HTMLCanvasElement | null;
-  public game: SwipeBrickBreaker;
+  public game: SwipeBrickBreakerApp;
 
   constructor(props: any) {
     super(props);
@@ -22,7 +22,8 @@ class App extends React.Component<{}, IState> {
       ratio: 1,
       width: 600,
     };
-    this.game = new SwipeBrickBreaker(
+    this.game = new SwipeBrickBreakerApp;
+    this.game.init(
       this.state.width,
       this.state.height,
       40);
@@ -40,22 +41,18 @@ class App extends React.Component<{}, IState> {
       app.setState({
         etime: app.state.etime + dtime
       });
-      app.game.update(dtime);
+      app.game.doUpdate(dtime);
     }, dtime, [this]);
   }
 
   public onClickHandler(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
     e.preventDefault();
-    this.game.start(e.clientX, e.clientY);
+    this.game.doShot(e.clientX, e.clientY);
   }
 
   public render(): JSX.Element {
     if (this.canvas != null) {
-      const ctx = this.canvas.getContext('2d');
-      if (ctx != null) {
-        ctx.clearRect(0, 0, this.state.width, this.state.height);
-        this.game.draw(ctx);
-      }
+      this.game.doRender(this.canvas);
     }
     return (
       <div className="App">
