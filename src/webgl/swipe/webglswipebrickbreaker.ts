@@ -42,12 +42,6 @@ export default class WebGLSwipeBrickBreaker {
         ];
     }
 
-    public move(x: number, y: number): void {
-        this.world[12] = x;
-        this.world[13] = y;
-        this.gl.setUniformMatrix4fv("world", this.world);
-    }
-
     public draw(): void {
         this.gl.useProgram("swipe");
         this.gl.setUniformMatrix4fv("proj", this.proj);
@@ -57,7 +51,9 @@ export default class WebGLSwipeBrickBreaker {
                 if (brick == null) {
                     return;
                 }
-                this.move(brick.x, brick.y);
+                this.world[12] = brick.x;
+                this.world[13] = brick.y;
+                this.gl.setUniformMatrix4fv("world", this.world);
                 this.gl.drawLine();
             });
         });
