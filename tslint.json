@@ -12,7 +12,17 @@
     ]
   },
   "rules": {
-    "no-console": false,
-    "no-bitwise": true
+    "no-bitwise": false,
+    "no-console": {
+      "severity": "warning",
+      "options": [
+        "debug",
+        "info",
+        "log",
+        "time",
+        "timeEnd",
+        "trace"
+      ]
+    }
   }
 }

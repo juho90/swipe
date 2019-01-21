@@ -44,7 +44,6 @@ export default class SwipeBrickBreakerApp {
     }
 
     private onEnterState(state: any): void {
-        console.log(state);
         switch (state) {
             case "ready":
                 this.swipe.gun.reload();
