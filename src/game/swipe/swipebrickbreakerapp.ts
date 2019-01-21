@@ -35,7 +35,7 @@ export default class SwipeBrickBreakerApp {
         this.fsm.update();
     }
 
-    public doRender(canvas: HTMLCanvasElement): void {
+    public doDraw(canvas: HTMLCanvasElement): void {
         const ctx = canvas.getContext('2d');
         if (ctx != null) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
