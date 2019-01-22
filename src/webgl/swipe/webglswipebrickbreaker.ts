@@ -8,6 +8,7 @@ export default class WebGLSwipeBrickBreaker {
     public swipe: SwipeBrickBreaker;
     public proj: number[];
     public world: number[];
+
     constructor() {
         this.gl = new WebGL;
     }
@@ -72,8 +73,8 @@ export default class WebGLSwipeBrickBreaker {
         });
         this.gl.useShape("circle", "position", 2);
         this.swipe.gun.balls.forEach(element => {
-            this.world[12] = element.x;
-            this.world[13] = element.y;
+            this.world[12] = element.x + element.r;
+            this.world[13] = element.y + element.r;
             this.gl.setUniformMatrix4fv("world", this.world);
             this.gl.drawLine();
         });
