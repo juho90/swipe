@@ -2,7 +2,7 @@
 react-typescript
 
 1. [개요](#개요)
-2. [개발 환경](#Aws-Ubuntu-Nginx-Nodejs-React)
+2. [개발 환경](#Aws-Ubuntu-Nginx-React)
 2. [서버 생성](#Aws생성)
 3. [웹 서버 설치](#Nginx설치)
 3. [Swipe 설치]()
@@ -80,19 +80,25 @@ Context Switching은 많은 자원을 요구한다.
 즉, 점점 nginx의 지원이 활발해지고 있는 추세이다.
 클라우드를 목표로 하면 Apache를 사용할 이유가 없다.
 
-### React (서버 프로그램)
+### React (서버 런타임 프로그램)
 
 
 
-## Aws-Ubuntu-Nginx-Nodejs-React
+## Aws-Ubuntu-Nginx-React
 
-AWS에서 제공하는 클라우드 서버에 Ubuntu 운영체제를 설치하고 웹 서비스를 위한 웹 서버 프로그램 Nginx를 설치한다. 그 위에 런타임 프로그램인 React를 실행하고 웹 서버 프로그램인 Nginx와 연동시킨다.
+1. 가상 실행 환경에서 React로 웹 앱을 개발.
+2. AWS에서 제공하는 클라우드 서버에 Ubuntu 운영체제를 설치.
+3. 웹 서비스를 위한 웹 서버 프로그램 Nginx를 설치.
+4. React 웹 앱을 설치 및 실행.
+5. Nginx와 React를 연동.
 
 스스로가 웹 서버 프로그램인 Nginx가 네트워크 어플리케이션인 React와 연동하는 이유는 복잡한 실행 구조에서 서로 역할을 다르게 할당하여 복잡성을 줄이려는 목적이다. React 자체로도 웹 서비스를 제공할 수 있지만 Nginx를 경유하면 유지 보수 차원에서 많은 이점이 생긴다. 이점에는 로드밸런싱, 어플리케이션 확장, HTTPS 지원, 자원공유, 보안 등이 있다. 항목 중에 React에서도 지원되는 기능들이 있지만 Nginx를 통해서 역할을 분담하고 복잡성을 줄이는데 의의가 있다.
 
-React와 Nginx의 연동이 가능한 이유는 Nginx가 프록시 서버의 기능을 가지고 있기 때문이다. 
+React와 Nginx의 연동이 가능한 이유는 Nginx가 프록시 서버의 기능을 가지고 있기 때문이다. Nginx는 진입점으로서 통신에 대한 많은 권한을 가지고 있다. 권한 중 웹 상의 통신 흐름을 다른 곳으로 흘려보내는 권한이 있다. Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 
 ## Aws생성
+
+
 
 ## Nginx설치
 
