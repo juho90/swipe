@@ -2,7 +2,9 @@
 react-typescript
 
 1. [개요](#개요)
-2. [웹 서버 설치](#nginx설치)
+2. [개발 환경](#Aws-Ubuntu-Nginx-Nodejs-React)
+2. [서버 생성](#Aws생성)
+3. [웹 서버 설치](#Nginx설치)
 3. [Swipe 설치]()
 4. [환경 설정]()
 5. [서버 프로그램 실행]()
@@ -16,6 +18,17 @@ react-typescript
 
 기존 벽돌깨기 게임에서 성장요소를 추가한 게임.
 게임은 재미있지만 변화 없이 매번 새로 플레이 하는 것이 시간도 아깝고 가치를 못 느껴서 RPG로 만듬.
+
+### Amazon Web Services (가상 PC 클라우드 서버)
+
+약칭 AWS를 선택한 이유
+
+클라우드 서버를 이용하는 이유는 물리 서버를 구매하는 것보다 여러 면(유지보수 및 관리, 사후처리, 민첩성 등등)에서 비용이 싸기 때문.
+가상 PC 클라우드 서버를 제공하는 업체는 대표적으로 4곳.
+Amazon의 Amazon Web Services, MS의 Azure, Google의 Google Cloud, IBM의 IBM cloud 등이 있음.
+이들 중 가장 먼저 클라우드 서비스 제공이 시작된 곳은 AWS이며, 세계적으로 가장 많이 이용되는 클라우스 서비스 기업임.
+그러나 2019년 1월 기준 MS의 Azure가 뒤따라가고 있음.
+Azure도 해보면 좋지만 주변 AWS 환경이기 때문에 학습겸 이용.
 
 ### Ubuntu 16.04 LTS / Xenial Xerus (운영체제)
 
@@ -62,7 +75,13 @@ Context Switching은 많은 자원을 요구.
 점점 nginx의 지원이 활발해지고 있는 추세.
 클라우드를 목표로 하면 Apache를 사용할 이유가 없음.
 
-## nginx설치
+### React (서버 프로그램)
+
+## Aws-Ubuntu-Nginx-Nodejs-React
+
+## Aws생성
+
+## Nginx설치
 
 ### 패키지 저장소 사용
 
