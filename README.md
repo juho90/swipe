@@ -17,7 +17,7 @@ react-typescript
 기존 벽돌깨기 게임에서 성장요소를 추가한 게임.
 게임은 재미있지만 변화 없이 매번 새로 플레이 하는 것이 시간도 아깝고 가치를 못 느껴서 RPG로 만듬.
 
-### Ubuntu 14.04 LTS / Trusty Tahr (운영체제)
+### Ubuntu 16.04 LTS / Xenial Xerus (운영체제)
 
 우분투 계열을 선택한 이유
 
@@ -71,8 +71,8 @@ Context Switching은 많은 자원을 요구.
     1. 파일 생성 후 편집 :
       cat > /etc/apt/sources.list.d/nginx.list
     2. 파일 내용 삽입 :
-      deb http://nginx.org/packages/mainline/ubuntu/ trusty nginx
-      deb-src http://nginx.org/packages/mainline/ubuntu/ trusty nginx
+      deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx
+      deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx
     3. 저장 후 종료 :
       ctrl + d
 
