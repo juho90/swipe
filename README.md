@@ -108,6 +108,7 @@ Context Switching은 많은 자원을 요구.
     apt-get update
     apt-get install -y nginx
     /etc/init.d/nginx start
+    curl localhost
 
 설명 :
 
@@ -116,3 +117,4 @@ Context Switching은 많은 자원을 요구.
 - apt-get update 명령은 apt 시스템이 알려진 저장소에서 패키지 목록을 새로 고치도록 지시.
 - 패키지 목록을 새로 고친 후 공식 NGINX 저장소에서 NGINX Open Source를 설치.
 - 설치 한 후 최종 명령이 NGINX를 시작.
+- 설치 후 실행 확인
