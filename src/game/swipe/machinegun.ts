@@ -58,7 +58,7 @@ export default class Machinegun {
         this.dir.x = x - this.x;
         this.dir.y = y - this.y;
         this.dir.nomalize();
-        this.dir.multiply(40);
+        this.dir.multiply(80);
         this.timer = 1 / fps;
         this.etime = 0;
         this.count = 0;

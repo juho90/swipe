@@ -5,7 +5,7 @@ react-typescript
 2. [개발 환경](#Aws-Ubuntu-Nginx-React)
 2. [서버 생성](#Aws생성)
 3. [웹 서버 설치](#Nginx설치)
-3. [Swipe 설치]()
+3. [Swipe 설치 및 서비스](#Swipe웹앱)
 4. [환경 설정]()
 5. [서버 프로그램 실행]()
 6. [도커 지원]()
@@ -82,7 +82,12 @@ Context Switching은 많은 자원을 요구한다.
 
 ### React (서버 런타임 프로그램)
 
+React를 선택한 이유
 
+React를 선택한 이유는 순수하게 공부가 목적이다.
+React를 공부하면 좋은 이유는 React가 가진 구조 때문이다.
+컴포넌트 기반 구조를 갖는 React는 객체 지향 프로그래밍 철학을 따르고 있다.
+더불어 React와 typescript를 함께 사용하면 객체 지향 프로그래밍을 올바르게 이해하고 좋은 습관을 기를 수 있을 것이라 기대한다.
 
 ## Aws-Ubuntu-Nginx-React
 
@@ -92,13 +97,31 @@ Context Switching은 많은 자원을 요구한다.
 4. React 웹 앱을 설치 및 실행.
 5. Nginx와 React를 연동.
 
-스스로가 웹 서버 프로그램인 Nginx가 네트워크 어플리케이션인 React와 연동하는 이유는 복잡한 실행 구조에서 서로 역할을 다르게 할당하여 복잡성을 줄이려는 목적이다. React 자체로도 웹 서비스를 제공할 수 있지만 Nginx를 경유하면 유지 보수 차원에서 많은 이점이 생긴다. 이점에는 로드밸런싱, 어플리케이션 확장, HTTPS 지원, 자원공유, 보안 등이 있다. 항목 중에 React에서도 지원되는 기능들이 있지만 Nginx를 통해서 역할을 분담하고 복잡성을 줄이는데 의의가 있다.
+스스로가 웹 서버 프로그램인 Nginx가 네트워크 어플리케이션인 React와 연동하는 이유는 복잡한 실행 구조에서 서로 역할을 다르게 할당하여 복잡성을 줄이려는 목적이다.
+React 자체로도 웹 서비스를 제공할 수 있지만 Nginx를 경유하면 유지 보수 차원에서 많은 이점이 생긴다.
+이점에는 로드밸런싱, 어플리케이션 확장, HTTPS 지원, 자원공유, 보안 등이 있다.
+항목 중에 React에서도 지원되는 기능들이 있지만 Nginx를 통해서 역할을 분담하고 복잡성을 줄이는데 의의가 있다.
 
-React와 Nginx의 연동이 가능한 이유는 Nginx가 프록시 서버의 기능을 가지고 있기 때문이다. Nginx는 진입점으로서 통신에 대한 많은 권한을 가지고 있다. 권한 중 웹 상의 통신 흐름을 다른 곳으로 흘려보내는 권한이 있다. Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
+React와 Nginx의 연동이 가능한 이유는 Nginx가 프록시 서버의 기능을 가지고 있기 때문이다.
+Nginx는 진입점으로서 통신에 대한 많은 권한을 가지고 있다.
+권한 중 웹 상의 통신 흐름을 다른 곳으로 흘려보내는 권한이 있다.
+Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 
 ## Aws생성
 
+명령 :
 
+    1. https://aws.amazon.com에 접속 및 가입
+    2. 가입 후 AWS Management Console로 이동
+    3. 전체 서비스 > 컴퓨팅 > EC2 인스턴스 생성
+    4. Ubuntu Server 16.04 LTS 설치
+    5. ssh를 등록
+    6. 접속 후 apt-get update 실행
+
+설명 :
+
+- 가성 PC 서버 서비스를 제공받기 위해 기업에 가입하고 서비스를 생성.
+- 우분투 설치 패키지 업데이트
 
 ## Nginx설치
 
@@ -106,13 +129,12 @@ React와 Nginx의 연동이 가능한 이유는 Nginx가 프록시 서버의 기
 
 명령 :
 
-    1. 파일 생성 후 편집 :
-      cat > /etc/apt/sources.list.d/nginx.list
-    2. 파일 내용 삽입 :
-      deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx
-      deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx
-    3. 저장 후 종료 :
-      ctrl + d
+    1. cat > /etc/apt/sources.list.d/nginx.list 실행
+    2. deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx
+       deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx
+       위 내용 삽입
+    3. ctrl + d
+       저장 후 종료
 
 설명 : 
 
@@ -137,3 +159,29 @@ React와 Nginx의 연동이 가능한 이유는 Nginx가 프록시 서버의 기
 - 패키지 목록을 새로 고친 후 공식 NGINX 저장소에서 NGINX Open Source를 설치.
 - 설치 한 후 최종 명령이 NGINX를 시작.
 - 설치 후 실행 확인
+
+## Swipe웹앱
+
+### 설치
+
+명령 :
+
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+    apt-get install -y nodejs
+    git clone https://github.com/juho90/swipe.git
+    cd swipe
+    npm install
+    npm run build
+
+설명 : 
+
+- React를 위해 Nodejs 10.x 버전을 사용하도록 설정
+- Nodejs 설치 
+    - npm 설치 X, npm이 포함되어 있음
+- 저장소로부터 웹 앱 다운로드
+- 웹 앱으로 이동
+- 종속된 npm 패키지 설치
+- 웹 앱 프로덕션 빌드
+
+### 서비스
+
