@@ -121,7 +121,7 @@ Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 설명 :
 
 - 가성 PC 서버 서비스를 제공받기 위해 기업에 가입하고 서비스를 생성.
-- 우분투 설치 패키지 업데이트
+- 우분투 설치 패키지 업데이트.
 
 ## Nginx설치
 
@@ -161,7 +161,7 @@ Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 - apt-get update 명령은 apt 시스템이 알려진 저장소에서 패키지 목록을 새로 고치도록 지시.
 - 패키지 목록을 새로 고친 후 공식 NGINX 저장소에서 NGINX Open Source를 설치.
 - 설치 한 후 최종 명령이 NGINX를 시작.
-- 설치 후 실행 확인
+- 설치 후 실행 확인.
 
 ## Swipe웹앱
 
@@ -178,13 +178,13 @@ Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 
 설명 : 
 
-- React를 위해 Nodejs 10.x 버전을 사용하도록 설정
-- Nodejs 설치 
-    - npm 설치 X, npm이 포함되어 있음
-- 저장소로부터 웹 앱 다운로드
-- 웹 앱으로 이동
-- 종속된 npm 패키지 설치
-- 웹 앱 프로덕션 빌드
+- React를 위해 Nodejs 10.x 버전을 사용하도록 설정.
+- Nodejs 설치.
+    - npm 설치 X, npm이 포함되어 있음.
+- 저장소로부터 웹 앱 다운로드.
+- 웹 앱으로 이동.
+- 종속된 npm 패키지 설치.
+- 웹 앱 프로덕션 빌드.
 
 ### 서비스
 
@@ -209,17 +209,17 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 설명 : 
 
 - 웹 앱 프로젝트 폴더로 이동
-- 'nginx-swipe.conf' 파일 확인
-- 내 설정에 맞게 'nginx-swipe.conf' 파일을 편집
-- '/etc/nginx/nginx.conf' 파일 확인
-- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/sites-enabled/*' 내용 제거
-    - 더 이상 사용되지 않는 설정
-- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/conf.d/*.conf' 내용 추가
-    - 기본적으로 포함되어 있지만 없는 경우
-    - 호스트 환경에서 /etc/nginx/conf.d/*.conf 에 포함된 설정을 사용하겠다는 의미
-- /etc/nginx/conf.d/ 디렉토리 검색
-    - 이미 사용중인 포트가 있는지 확인
-- nginx-swipe.conf 내용을 /etc/nginx/conf.d/ 폴더로 복사
-- 설정을 적용 후 Nginx 재시작
+- 'nginx-swipe.conf' 파일 확인.
+- 내 설정에 맞게 'nginx-swipe.conf' 파일을 편집.
+- '/etc/nginx/nginx.conf' 파일 확인.
+- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/sites-enabled/*' 내용 제거.
+    - 더 이상 사용되지 않는 설정.
+- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/conf.d/*.conf' 내용 추가.
+    - 기본적으로 포함되어 있지만 없는 경우.
+    - 호스트 환경에서 /etc/nginx/conf.d/*.conf 에 포함된 설정을 사용하겠다는 의미.
+- /etc/nginx/conf.d/ 디렉토리 검색.
+    - 이미 사용중인 포트가 있는지 확인.
+- nginx-swipe.conf 내용을 /etc/nginx/conf.d/ 폴더로 복사.
+- 설정을 적용 후 Nginx 재시작.
 
 > nginx.conf 파일 또는 conf.d 디렉토리에 대한 자세한 내용은 doc 문서 참고.
