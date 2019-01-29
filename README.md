@@ -129,16 +129,19 @@ Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 
 명령 :
 
-    1. cat > /etc/apt/sources.list.d/nginx.list 실행
-    2. deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx
-       deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx
-       위 내용 삽입
-    3. ctrl + d
-       저장 후 종료
+    cat > /etc/apt/sources.list.d/nginx.list
+    [copy and paste 'deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx']
+    [press key enter]
+    [copy and paste 'deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx']
+    [press key enter]
+    [press key 'ctrl + d']
 
 설명 : 
 
 - 리눅스의 패키지 관리 시스템인 apt에게 공식 NGINX 패키지 저장소를 사용하도록 지시.
+- 파일 생성 후 편집 실행.
+- 내용 복사.
+- 저장 후 편집 종료.
 
 ### 패키지 설치
 
@@ -185,3 +188,37 @@ Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 
 ### 서비스
 
+Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 방법도 있지만 Nginx는 기본적으로 웹 서비스 프로그램이다.
+그리고 React는 웹 서비스의 기본적인 형태와 유사하게 웹 앱을 빌드해준다.
+이런 형태는 프록시 서버를 통해 연결되는 오버헤드를 줄인다.
+또한 Nginx를 통해 빌드된 React를 배포하는 일은 간단하다.
+
+명령 : 
+
+    cd swipe
+    cat nginx-swipe.conf
+    [edit nginx-swipe.conf for myconfig]
+    cat /etc/nginx/nginx.conf
+    [remove 'include /etc/nginx/sites-enabled/*' in http block]
+    [add 'include /etc/nginx/conf.d/*.conf' in http block]
+    ls -al /etc/nginx/conf.d/
+    [check for port already in use]
+    cp ./nginx-swipe.conf /etc/nginx/conf.d/
+    nginx -s reload
+
+설명 : 
+
+- 웹 앱 프로젝트 폴더로 이동
+- 'nginx-swipe.conf' 파일 확인
+- 내 설정에 맞게 'nginx-swipe.conf' 파일을 편집
+- '/etc/nginx/nginx.conf' 파일 확인
+- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/sites-enabled/*' 내용 제거
+    - 더 이상 사용되지 않는 설정
+- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/conf.d/*.conf' 내용 추가
+    - 기본적으로 포함되어 있지만 없는 경우
+    - 호스트 환경에서 /etc/nginx/conf.d/*.conf 에 포함된 설정을 사용하겠다는 의미
+- 이미 사용중인 포트가 있는지 확인
+- nginx-swipe.conf 내용을 /etc/nginx/conf.d/ 폴더로 복사
+- 설정을 적용 후 Nginx 재시작
+
+> nginx.conf 파일 또는 conf.d 디렉토리에 대한 자세한 내용은 doc 문서 참고.
