@@ -217,7 +217,8 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 - '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/conf.d/*.conf' 내용 추가
     - 기본적으로 포함되어 있지만 없는 경우
     - 호스트 환경에서 /etc/nginx/conf.d/*.conf 에 포함된 설정을 사용하겠다는 의미
-- 이미 사용중인 포트가 있는지 확인
+- /etc/nginx/conf.d/ 디렉토리 검색
+    - 이미 사용중인 포트가 있는지 확인
 - nginx-swipe.conf 내용을 /etc/nginx/conf.d/ 폴더로 복사
 - 설정을 적용 후 Nginx 재시작
 
