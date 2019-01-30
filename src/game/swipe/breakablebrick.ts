@@ -9,12 +9,17 @@ export default class BreakableBrick extends Brick {
     }
 
     public break(): void {
-        if (0 < --this.skin) {
+        if (this.usable() === true) {
+            this.skin--;
             return;
         }
         this.x = 0;
         this.y = 0;
         this.w = 0;
         this.h = 0;
+    }
+
+    public usable(): boolean {
+        return (0 < this.skin)
     }
 }

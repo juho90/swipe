@@ -36,28 +36,35 @@ export default class SwipeBrickBreaker {
     public update(dtime: number): void {
         this.gun.update(dtime);
         this.board.bricks.forEach(line => {
-            line.forEach(brick => {
-                if (brick == null) {
-                    return;
+            for (let index = 0; index < line.length; ++index) {
+                const brick = (line[index] as BreakableBrick);
+                if (brick === null) {
+                    continue;
                 }
-                this.gun.balls.forEach(element => {
-                    const result = MyMath.collisionBrickWithBall(brick, element);
+                for (const ball of this.gun.balls) {
+                    const result = MyMath.collisionBrickWithBall(brick, ball);
                     if (result.hit) {
-                        (brick as BreakableBrick).break();
                         switch (result.cw) {
                             case Clockwise.NONE:
-                                element.dir.reverse();
+                                ball.dir.reverse();
                                 break;
                             case Clockwise.TRUE:
-                                element.dir.reverseXAsix();
+                                ball.dir.reverseXAsix();
                                 break;
                             case Clockwise.ANTI:
-                                element.dir.reverseYAsix();
+                                ball.dir.reverseYAsix();
                                 break;
                         }
+                        brick.break();
+                        if (brick.usable() !== true) {
+                            break;
+                        }
                     }
-                });
-            });
+                }
+                if (brick.usable() !== true) {
+                    line[index] = null;
+                }
+            }
         });
         this.gun.balls.forEach(element => {
             const over = MyMath.collisionBoardWithBall(this.w, this.h, element);
