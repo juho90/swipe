@@ -1,9 +1,12 @@
+import BreakableBrick from '../../game/swipe/breakablebrick';
 import SwipeBrickBreaker from '../../game/swipe/swipebrickbreaker';
 import PixelShader from '../default.x-fragment';
 import VertexShader from '../default.x-vertex';
+import Text2D from '../text2d';
 import WebGL from '../webgl';
 
 export default class WebGLSwipeBrickBreaker {
+    public text2d: Text2D;
     public gl: WebGL;
     public swipe: SwipeBrickBreaker;
     public proj: number[];
@@ -13,7 +16,7 @@ export default class WebGLSwipeBrickBreaker {
         this.gl = new WebGL;
     }
 
-    public init(gl: WebGL, swipe: SwipeBrickBreaker): void {
+    public init(text2d: Text2D, gl: WebGL, swipe: SwipeBrickBreaker): void {
         gl.registerProgram("swipe", VertexShader, PixelShader, ["proj", "world"]);
         gl.registerShape("brick",
             [
@@ -41,6 +44,7 @@ export default class WebGLSwipeBrickBreaker {
         indices[vertices.length - 2] = count - 1;
         indices[vertices.length - 1] = 0;
         gl.registerShape("circle", vertices, indices);
+        this.text2d = text2d;
         this.gl = gl;
         this.swipe = swipe;
         this.proj = [
@@ -78,5 +82,28 @@ export default class WebGLSwipeBrickBreaker {
             this.gl.setUniformMatrix4fv("world", this.world);
             this.gl.drawLine();
         });
+        this.world[12] = this.swipe.gun.x + this.swipe.gun.r;
+        this.world[13] = this.swipe.gun.y + this.swipe.gun.r;
+        this.gl.setUniformMatrix4fv("world", this.world);
+        this.gl.drawLine();
+    }
+
+    public drawText(): void {
+        this.text2d.setTextColor("white");
+        this.swipe.board.bricks.forEach(line => {
+            line.forEach(brick => {
+                if (brick == null) {
+                    return;
+                }
+                this.text2d.drawText((brick as BreakableBrick).skin.toString(),
+                    brick.x + brick.w / 2 - 10,
+                    brick.y + brick.h / 2 + 10);
+            });
+        });
+        this.text2d.setTextSize(20);
+        this.text2d.drawText("X " +
+            (this.swipe.gun.balls.length - this.swipe.gun.shootCount).toString(),
+            this.swipe.gun.x + 20,
+            this.swipe.gun.y - 10);
     }
 }

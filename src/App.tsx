@@ -3,6 +3,7 @@ import { setTimeout } from 'timers';
 import './App.css';
 import SwipeBrickBreakerApp from './game/swipe/swipebrickbreakerapp';
 import WebGLSwipeBrickBreaker from './webgl/swipe/webglswipebrickbreaker';
+import Text2D from './webgl/text2d';
 import WebGL from './webgl/webgl';
 
 interface IState {
@@ -13,10 +14,12 @@ interface IState {
 }
 
 class App extends React.Component<{}, IState> {
-  public canvas: HTMLCanvasElement | null;
-  public game: SwipeBrickBreakerApp;
+  public underCanvas: HTMLCanvasElement | null;
+  public overCanvas: HTMLCanvasElement | null;
+  public swipeGame: SwipeBrickBreakerApp;
+  public text2d: Text2D;
   public webgl: WebGL;
-  public webglswipe: WebGLSwipeBrickBreaker;
+  public swipeGL: WebGLSwipeBrickBreaker;
   constructor(props: any) {
     super(props);
     this.state = {
@@ -25,22 +28,27 @@ class App extends React.Component<{}, IState> {
       ratio: 1,
       width: 600,
     };
-    this.game = new SwipeBrickBreakerApp;
-    this.game.init(
+    this.swipeGame = new SwipeBrickBreakerApp;
+    this.swipeGame.init(
       this.state.width,
       this.state.height,
       40);
+    this.text2d = new Text2D;
     this.webgl = new WebGL;
-    this.webglswipe = new WebGLSwipeBrickBreaker;
+    this.swipeGL = new WebGLSwipeBrickBreaker;
     this.onClickHandler = this.onClickHandler.bind(this);
   }
 
   public componentDidMount(): void {
-    if (this.canvas === null) {
-      throw new Error("App canvas is null");
+    if (this.underCanvas === null) {
+      throw new Error("App underCanvas is null");
     }
-    this.webgl.init(this.canvas);
-    this.webglswipe.init(this.webgl, this.game.swipe);
+    if (this.overCanvas === null) {
+      throw new Error("App overCanvas is null");
+    }
+    this.text2d.init(this.overCanvas);
+    this.webgl.init(this.underCanvas);
+    this.swipeGL.init(this.text2d, this.webgl, this.swipeGame.swipe);
     this.componentWillUpdate();
   }
 
@@ -51,27 +59,33 @@ class App extends React.Component<{}, IState> {
       app.setState({
         etime: app.state.etime + dtime
       });
-      app.game.doUpdate(dtime);
+      app.swipeGame.doUpdate(dtime);
     }, dtime, [this]);
   }
 
   public onClickHandler(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>): void {
     e.preventDefault();
-    this.game.doShot(e.clientX, e.clientY);
+    this.swipeGame.doShot(e.clientX, e.clientY);
   }
 
   public render(): JSX.Element {
-    if (this.canvas != null) {
+    if (this.underCanvas != null && this.overCanvas != null) {
+      this.text2d.begin();
+      this.swipeGL.drawText();
       this.webgl.begin();
-      this.webglswipe.draw();
+      this.swipeGL.draw();
     }
     return (
       <div className="App">
         <h1 className="App-title">Welcome to React</h1>
-        <canvas className="Canvas" ref={canvas => (this.canvas = canvas)}
+        <canvas className="Under" ref={canvas => (this.underCanvas = canvas)}
           width={this.state.width * this.state.ratio}
           height={this.state.height * this.state.ratio}
           onClick={this.onClickHandler}
+        />
+        <canvas className="Over" ref={canvas => (this.overCanvas = canvas)}
+          width={this.state.width * this.state.ratio}
+          height={this.state.height * this.state.ratio}
         />
       </div>
     );
