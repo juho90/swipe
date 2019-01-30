@@ -9,13 +9,13 @@ export default class Machinegun {
     public dir: Vec2;
     public timer: number;
     private etime: number
-    private count: number;
+    private shootCount: number;
 
     constructor() {
         this.balls = [];
         this.dir = new Vec2;
         this.etime = 0;
-        this.count = 0;
+        this.shootCount = 0;
     }
 
     public setMagazine(amount: number): void {
@@ -41,12 +41,12 @@ export default class Machinegun {
         });
     }
 
-    public shotAngle(fps: number, radian: number): void {
+    public shootAngle(fps: number, radian: number): void {
         this.dir.angle(radian);
         this.dir.multiply(40);
         this.timer = 1 / fps;
         this.etime = 0;
-        this.count = 0;
+        this.shootCount = 0;
         this.balls.forEach(element => {
             element.x = this.x;
             element.y = this.y;
@@ -54,14 +54,14 @@ export default class Machinegun {
         });
     }
 
-    public shotTarget(fps: number, x: number, y: number): void {
+    public shootTarget(fps: number, x: number, y: number): void {
         this.dir.x = x - this.x;
         this.dir.y = y - this.y;
         this.dir.nomalize();
         this.dir.multiply(80);
         this.timer = 1 / fps;
         this.etime = 0;
-        this.count = 0;
+        this.shootCount = 0;
         this.balls.forEach(element => {
             element.x = this.x;
             element.y = this.y;
@@ -71,7 +71,7 @@ export default class Machinegun {
 
     public reload(): void {
         this.etime = 0;
-        this.count = 0;
+        this.shootCount = 0;
         this.balls.forEach(element => {
             element.x = this.x;
             element.y = this.y;
@@ -83,9 +83,9 @@ export default class Machinegun {
         this.etime += dtime;
         if (this.timer <= this.etime) {
             this.etime = 0;
-            this.count = Math.min(this.count + 1, this.balls.length);
+            this.shootCount = Math.min(this.shootCount + 1, this.balls.length);
         }
-        for (let index = 0; index < this.count; ++index) {
+        for (let index = 0; index < this.shootCount; ++index) {
             this.balls[index].update(dtime);
         }
     }

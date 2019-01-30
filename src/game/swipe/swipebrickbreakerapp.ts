@@ -25,7 +25,7 @@ export default class SwipeBrickBreakerApp {
 
     public doShot(dirX: number, dirY: number): void {
         if (this.fsm.currentState === "ready") {
-            this.swipe.gun.shotTarget(3, dirX, dirY);
+            this.swipe.gun.shootTarget(3, dirX, dirY);
             this.fsm.set("run");
         }
     }
