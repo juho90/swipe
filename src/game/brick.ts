@@ -13,6 +13,13 @@ export default class Brick implements IPos2d {
 		this.y = y;
 	}
 
+	public center(): IPos2d {
+		return {
+			x: this.x + this.w / 2,
+			y: this.y + this.h / 2
+		}
+	}
+
 	public draw(ctx: CanvasRenderingContext2D): void {
 		ctx.beginPath();
 		ctx.rect(this.x, this.y, this.w, this.h);

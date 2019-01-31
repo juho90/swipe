@@ -11,6 +11,13 @@ export default class Ball implements IPos2d {
         this.y = y;
     }
 
+    public center(): IPos2d {
+        return {
+            x: this.x + this.r,
+            y: this.y + this.r
+        }
+    }
+
     public draw(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
         ctx.arc(

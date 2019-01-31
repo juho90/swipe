@@ -86,6 +86,12 @@ export default class WebGLSwipeBrickBreaker {
         this.world[13] = this.swipe.gun.y + this.swipe.gun.r;
         this.gl.setUniformMatrix4fv("world", this.world);
         this.gl.drawLine();
+        this.swipe.field.chips.forEach(element => {
+            this.world[12] = element.pos.x;
+            this.world[13] = element.pos.y;
+            this.gl.setUniformMatrix4fv("world", this.world);
+            this.gl.drawLine();
+        });
     }
 
     public drawText(): void {

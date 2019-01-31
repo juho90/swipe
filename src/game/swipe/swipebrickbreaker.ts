@@ -1,9 +1,11 @@
+import BottomDropField from './bottomdropfield';
 import BreakableBrick from './breakablebrick';
 import FlowdownBoard from './flowdownboard';
 import Machinegun from './machinegun';
 
 export default class SwipeBrickBreaker {
     public board: FlowdownBoard;
+    public field: BottomDropField;
     public gun: Machinegun;
     public w: number;
     public h: number;
@@ -12,6 +14,7 @@ export default class SwipeBrickBreaker {
         this.w = w;
         this.h = h;
         this.board = new FlowdownBoard(w / cell, h / cell, cell);
+        this.field = new BottomDropField(this.h - cell);
         this.gun = new Machinegun;
         this.gun.setMM(cell / 8);
         this.gun.setPos(
@@ -33,12 +36,16 @@ export default class SwipeBrickBreaker {
     }
 
     public update(dtime: number): void {
+        this.field.update(dtime);
         this.gun.update(dtime);
         this.board.detect<BreakableBrick>(brick => {
             for (const ball of this.gun.balls) {
                 if (ball.boundWithBrick(brick) === true) {
                     brick.break();
                     if (brick.usable() !== true) {
+                        this.field.addAuto(
+                            brick.center(),
+                            { type: 0, id: 0 });
                         return false;
                     }
                 }
