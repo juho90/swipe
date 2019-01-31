@@ -1,4 +1,6 @@
-export default class Vec2 {
+import IPos2d from './pos2d';
+
+export default class Vec2d implements IPos2d {
     public x: number;
     public y: number;
 
@@ -47,7 +49,7 @@ export default class Vec2 {
         this.y *= -1;
     }
 
-    public clone(): Vec2 {
-        return new Vec2(this.x, this.y);
+    public clone(): Vec2d {
+        return new Vec2d(this.x, this.y);
     }
 }

@@ -1,4 +1,6 @@
-export default class Brick {
+import IPos2d from './pos2d';
+
+export default class Brick implements IPos2d {
 	public w: number;
 	public h: number;
 	public x: number;

@@ -1,4 +1,4 @@
-import Vec2 from '../vec2';
+import Vec2d from '../vec2d';
 import Tengnamball from './tengnamball';
 
 export default class Machinegun {
@@ -6,14 +6,14 @@ export default class Machinegun {
     public x: number;
     public y: number;
     public r: number;
-    public dir: Vec2;
+    public dir: Vec2d;
     public shootCount: number;
     private shootInterval: number;
     private shootTimer: number;
 
     constructor() {
         this.balls = [];
-        this.dir = new Vec2;
+        this.dir = new Vec2d;
         this.shootCount = 0;
         this.shootTimer = 0;
     }

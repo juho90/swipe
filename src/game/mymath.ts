@@ -1,6 +1,7 @@
 import Ball from './ball';
 import Brick from './brick';
-import Vec2 from './vec2';
+import IPos2d from './pos2d';
+import Vec2 from './vec2d';
 
 export enum Clockwise {
     NONE,
@@ -36,7 +37,7 @@ const MyMath = {
             d.nomalize();
             d.multiply(ball.r);
             return {
-                cw: hit ? MyMath.getClockwise(brick.w, brick.h, d.x, d.y) : Clockwise.NONE,
+                cw: hit ? MyMath.getClockwise({ x: brick.w, y: brick.h }, d) : Clockwise.NONE,
                 hit
             }
         }
@@ -90,10 +91,10 @@ const MyMath = {
         }
         return line;
     },
-    getClockwise: (x1: number, y1: number, x2: number, y2: number): Clockwise => {
-        const dy = Math.abs(y1 - y2);
-        const dx = Math.abs(x1 - x2);
-        const dh = (dy / dx * x1) - y1;
+    getClockwise: (p1: IPos2d, p2: IPos2d): Clockwise => {
+        const dy = Math.abs(p1.y - p2.y);
+        const dx = Math.abs(p1.x - p2.x);
+        const dh = (dy / dx * p1.x) - p1.y;
         if (0 === dh) {
             return Clockwise.NONE;
         }
@@ -102,6 +103,15 @@ const MyMath = {
         }
         else {
             return Clockwise.ANTI;
+        }
+    },
+    lerp: (v1: number, v2: number, d: number): number => {
+        return (1 - d) * v1 + d * v2;
+    },
+    posLerp: (p1: IPos2d, p2: IPos2d, d: number): IPos2d => {
+        return {
+            x: MyMath.lerp(p1.x, p2.x, d),
+            y: MyMath.lerp(p1.y, p2.y, d)
         }
     }
 }
