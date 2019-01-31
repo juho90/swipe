@@ -7,13 +7,11 @@ export default class Board {
     public h: number;
 
     constructor(w: number, h: number, cell: number) {
-        this.bricks = [];
-        for (let y = 0; y < h; ++y) {
-            this.bricks[y] = [];
-            for (let x = 0; x < w; ++x) {
-                this.bricks[y][x] = null;
-            }
-        }
+        this.bricks = new Array(h);
+        this.bricks.fill(new Array(w), 0, h);
+        this.bricks.forEach(element => {
+            element.fill(null, 0, w);
+        });
         this.cell = cell;
         this.w = w;
         this.h = h;
@@ -35,8 +33,17 @@ export default class Board {
         return this.bricks[celly][cellx] as T;
     }
 
-    public detect<T extends Brick = Brick>(x: number, y: number): T | null {
-        return this.find<T>(y / this.cell, x / this.cell);
+    public detect<T extends Brick = Brick>(func: (brick: T) => boolean): void {
+        this.bricks.forEach(line => {
+            line.forEach((brick, index, array) => {
+                if (brick == null) {
+                    return;
+                }
+                if (func(brick as T) !== true) {
+                    array[index] = null;
+                }
+            });
+        });
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {

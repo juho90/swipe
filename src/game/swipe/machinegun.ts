@@ -8,14 +8,14 @@ export default class Machinegun {
     public r: number;
     public dir: Vec2;
     public shootCount: number;
+    private shootInterval: number;
     private shootTimer: number;
-    private shootETime: number;
 
     constructor() {
         this.balls = [];
         this.dir = new Vec2;
-        this.shootETime = 0;
         this.shootCount = 0;
+        this.shootTimer = 0;
     }
 
     public setMagazine(amount: number): void {
@@ -44,8 +44,8 @@ export default class Machinegun {
     public shootAngle(fps: number, radian: number): void {
         this.dir.angle(radian);
         this.dir.multiply(40);
-        this.shootTimer = 1 / fps;
-        this.shootETime = 0;
+        this.shootInterval = 1 / fps;
+        this.shootTimer = 0;
         this.shootCount = 0;
         this.balls.forEach(element => {
             element.x = this.x;
@@ -59,8 +59,8 @@ export default class Machinegun {
         this.dir.y = y - this.y;
         this.dir.nomalize();
         this.dir.multiply(80);
-        this.shootTimer = 1 / fps;
-        this.shootETime = 0;
+        this.shootInterval = 1 / fps;
+        this.shootTimer = 0;
         this.shootCount = 0;
         this.balls.forEach(element => {
             element.x = this.x;
@@ -70,7 +70,7 @@ export default class Machinegun {
     }
 
     public reload(): void {
-        this.shootETime = 0;
+        this.shootTimer = 0;
         this.shootCount = 0;
         this.balls.forEach(element => {
             element.x = this.x;
@@ -80,9 +80,9 @@ export default class Machinegun {
     }
 
     public update(dtime: number): void {
-        this.shootETime += dtime;
-        if (this.shootTimer <= this.shootETime) {
-            this.shootETime = 0;
+        this.shootTimer += dtime;
+        if (this.shootInterval <= this.shootTimer) {
+            this.shootTimer = 0;
             this.shootCount = Math.min(this.shootCount + 1, this.balls.length);
         }
         for (let index = 0; index < this.shootCount; ++index) {

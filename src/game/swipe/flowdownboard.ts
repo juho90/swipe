@@ -5,10 +5,10 @@ import BreakableBrick from './breakablebrick';
 export default class FlowdownBoard extends Board {
     public genFlowdown(skin: number): void {
         this.flowdown();
-        const lines = MyMath.genRandomNumbers(
+        const line = MyMath.genRandomNumbers(
             1 + Math.floor(Math.random() * (this.w - 1)),
             0, this.w);
-        lines.forEach(element => {
+        line.forEach(element => {
             this.add(new BreakableBrick(skin), element, 0);
         });
     }
@@ -22,9 +22,7 @@ export default class FlowdownBoard extends Board {
                 }
             });
         });
-        this.bricks.unshift([]);
-        for (let index = 0; index < this.w; ++index) {
-            this.bricks[0][index] = null;
-        }
+        this.bricks.unshift(new Array(this.w));
+        this.bricks[0].fill(null, 0, this.w);
     }
 }

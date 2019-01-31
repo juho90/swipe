@@ -1,4 +1,3 @@
-import MyMath, { Clockwise } from '../mymath';
 import BreakableBrick from './breakablebrick';
 import FlowdownBoard from './flowdownboard';
 import Machinegun from './machinegun';
@@ -28,57 +27,26 @@ export default class SwipeBrickBreaker {
     }
 
     public checkMovingBall(): boolean {
-        return this.gun.balls.find((element): boolean => {
+        return this.gun.balls.find(element => {
             return element.dir.x !== 0 || element.dir.y !== 0;
         }) !== undefined;
     }
 
     public update(dtime: number): void {
         this.gun.update(dtime);
-        this.board.bricks.forEach(line => {
-            for (let index = 0; index < line.length; ++index) {
-                const brick = (line[index] as BreakableBrick);
-                if (brick === null) {
-                    continue;
-                }
-                for (const ball of this.gun.balls) {
-                    const result = MyMath.collisionBrickWithBall(brick, ball);
-                    if (result.hit) {
-                        switch (result.cw) {
-                            case Clockwise.NONE:
-                                ball.dir.reverse();
-                                break;
-                            case Clockwise.TRUE:
-                                ball.dir.reverseXAsix();
-                                break;
-                            case Clockwise.ANTI:
-                                ball.dir.reverseYAsix();
-                                break;
-                        }
-                        brick.break();
-                        if (brick.usable() !== true) {
-                            break;
-                        }
+        this.board.detect<BreakableBrick>(brick => {
+            for (const ball of this.gun.balls) {
+                if (ball.boundWithBrick(brick) === true) {
+                    brick.break();
+                    if (brick.usable() !== true) {
+                        return false;
                     }
                 }
-                if (brick.usable() !== true) {
-                    line[index] = null;
-                }
             }
+            return true;
         });
         this.gun.balls.forEach(element => {
-            const over = MyMath.collisionBoardWithBall(this.w, this.h, element);
-            if (over.overH === -1) {
-                element.stop();
-            }
-            else {
-                if (over.overW) {
-                    element.dir.x = over.overW * Math.abs(element.dir.x);
-                }
-                if (over.overH) {
-                    element.dir.y = over.overH * Math.abs(element.dir.y);
-                }
-            }
+            element.boundWithBoard(this.w, this.h);
         });
     }
 
