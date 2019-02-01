@@ -79,6 +79,10 @@ export default class Machinegun {
         });
     }
 
+    public add(): void {
+        this.balls.push(new Tengnamball(this.r, this.x, this.y));
+    }
+
     public update(dtime: number): void {
         this.shootTimer += dtime;
         if (this.shootInterval <= this.shootTimer) {

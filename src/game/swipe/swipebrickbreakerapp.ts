@@ -1,4 +1,5 @@
 import FiniteStateMachine from '../finitestatemachine';
+import Vec2d from '../vec2d';
 import BottomDropField from './bottomdropfield';
 import SwipeBrickBreaker from './swipebrickbreaker';
 
@@ -9,6 +10,8 @@ export default class SwipeBrickBreakerApp {
     public fsm: FiniteStateMachine;
     public endGame: boolean;
     public dtime: number;
+    private nextInterval: number;
+    private nextTimer: number;
 
     public init(w: number, h: number, cell: number): void {
         this.level = 1;
@@ -56,7 +59,17 @@ export default class SwipeBrickBreakerApp {
         switch (state) {
             case "ready":
                 this.swipe.gun.reload();
+                this.field.releaseAll(item => {
+                    this.swipe.gun.add();
+                });
+                this.field.doDrop();
                 break;
+            case "next":
+                this.nextInterval = 3;
+                this.nextTimer = 0;
+                this.field.doFollow(
+                    new Vec2d(this.swipe.gun.x, this.field.h),
+                    this.nextInterval);
         }
     }
 
@@ -79,12 +92,15 @@ export default class SwipeBrickBreakerApp {
     }
 
     private next(): void {
-        if (this.swipe.checkLimitLine()) {
-            this.fsm.set("end");
-        }
-        else {
-            this.swipe.board.genFlowdown(++this.level);
-            this.fsm.set("ready");
+        this.nextTimer += this.dtime;
+        if (this.nextInterval <= this.nextTimer) {
+            if (this.swipe.checkLimitLine()) {
+                this.fsm.set("end");
+            }
+            else {
+                this.swipe.board.genFlowdown(++this.level);
+                this.fsm.set("ready");
+            }
         }
     }
 }
