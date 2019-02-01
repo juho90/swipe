@@ -1,11 +1,10 @@
 import MyMath from './mymath';
-import IPos2d from './pos2d';
 import Vec2d from './vec2d';
 
-export default class FunctionalPos<T extends IPos2d = Vec2d> {
+export default class FunctionalPos<T extends Vec2d = Vec2d> {
     public pos: T;
-    public target: IPos2d | null;
-    public dir: IPos2d | null;
+    public target: Vec2d | null;
+    public dir: Vec2d | null;
     private interval: number;
     private timer: number;
 
@@ -15,17 +14,28 @@ export default class FunctionalPos<T extends IPos2d = Vec2d> {
         this.dir = null;
     }
 
-    public follow(target: IPos2d | null, interval: number = 0): void {
+    public follow(target: Vec2d | null, interval: number = 0): void {
         this.target = target;
         this.interval = interval;
         this.timer = 0;
     }
 
-    public move(dir: IPos2d): void {
-        this.dir = dir;
+    public push(dir: Vec2d): void {
+        if (this.dir === null) {
+            this.dir = new Vec2d(0, 0);
+        }
+        this.dir.x += dir.x;
+        this.dir.y += dir.y;
     }
 
-    public update(dtime: number) {
+    public gravity(g: number, dtime: number): void {
+        if (this.dir == null) {
+            this.dir = new Vec2d(0, 0);
+        }
+        this.dir.y += g * dtime;
+    }
+
+    public update(dtime: number): void {
         if (this.dir !== null) {
             this.pos.x += this.dir.x * dtime;
             this.pos.y += this.dir.y * dtime;

@@ -1,6 +1,4 @@
-import IPos2d from './pos2d';
-
-export default class Vec2d implements IPos2d {
+export default class Vec2d {
     public x: number;
     public y: number;
 
@@ -9,17 +7,22 @@ export default class Vec2d implements IPos2d {
         this.y = y;
     }
 
+    public zero(): void {
+        this.x = 0;
+        this.y = 0;
+    }
+
     public multiply(value: number) {
         this.x *= value;
         this.y *= value;
     }
 
-    public length(): number {
+    public leng(): number {
         return Math.sqrt((this.x * this.x) + (this.y * this.y));
     }
 
     public nomalize(): void {
-        const length = this.length();
+        const length = this.leng();
         this.x /= length;
         this.y /= length;
     }
@@ -47,9 +50,5 @@ export default class Vec2d implements IPos2d {
     public reverse(): void {
         this.x *= -1;
         this.y *= -1;
-    }
-
-    public clone(): Vec2d {
-        return new Vec2d(this.x, this.y);
     }
 }

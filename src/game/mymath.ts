@@ -1,7 +1,6 @@
 import Ball from './ball';
 import Brick from './brick';
-import IPos2d from './pos2d';
-import Vec2 from './vec2d';
+import Vec2d from './vec2d';
 
 export enum Clockwise {
     NONE,
@@ -9,20 +8,29 @@ export enum Clockwise {
     ANTI,
 }
 
+export interface IBoardOver {
+    overW: number;
+    overH: number;
+}
+
 const MyMath = {
-    collisionBoardWithBall: (w: number, h: number, ball: Ball): any => {
+    collisionBoardWithBall: (w: number, h: number, pos: Vec2d, r: number): IBoardOver => {
         let overW = 0;
-        if (ball.x <= 0) {
+        if (pos.x <= 0) {
+            pos.x = 0;
             overW = 1;
         }
-        else if (w <= (ball.x + (ball.r * 2))) {
+        else if (w <= (pos.x + (r * 2))) {
+            pos.x = w - (r * 2);
             overW = -1;
         }
         let overH = 0;
-        if (ball.y <= 0) {
+        if (pos.y <= 0) {
+            pos.y = 0;
             overH = 1;
         }
-        else if (h <= (ball.y + (ball.r * 2))) {
+        else if (h <= (pos.y + (r * 2))) {
+            pos.y = h - (r * 2);
             overH = -1;
         }
         return {
@@ -37,7 +45,7 @@ const MyMath = {
             d.nomalize();
             d.multiply(ball.r);
             return {
-                cw: hit ? MyMath.getClockwise({ x: brick.w, y: brick.h }, d) : Clockwise.NONE,
+                cw: hit ? MyMath.getClockwise(new Vec2d(brick.w, brick.h), d) : Clockwise.NONE,
                 hit
             }
         }
@@ -69,8 +77,8 @@ const MyMath = {
         const sq = (dotX * dotX) + (dotY * dotY);
         return (sq <= (ball.r * ball.r));
     },
-    distanceBrickWithBall: (brick: Brick, ball: Ball): Vec2 => {
-        return new Vec2(
+    distanceBrickWithBall: (brick: Brick, ball: Ball): Vec2d => {
+        return new Vec2d(
             Math.abs((ball.x + ball.r) - (brick.x + brick.w / 2)),
             Math.abs((ball.y + ball.r) - (brick.y + brick.h / 2)));
     },
@@ -91,7 +99,7 @@ const MyMath = {
         }
         return line;
     },
-    getClockwise: (p1: IPos2d, p2: IPos2d): Clockwise => {
+    getClockwise: (p1: Vec2d, p2: Vec2d): Clockwise => {
         const dy = Math.abs(p1.y - p2.y);
         const dx = Math.abs(p1.x - p2.x);
         const dh = (dy / dx * p1.x) - p1.y;
@@ -108,12 +116,22 @@ const MyMath = {
     lerp: (v1: number, v2: number, d: number): number => {
         return (1 - d) * v1 + d * v2;
     },
-    posLerp: (p1: IPos2d, p2: IPos2d, d: number): IPos2d => {
-        return {
-            x: MyMath.lerp(p1.x, p2.x, d),
-            y: MyMath.lerp(p1.y, p2.y, d)
+    posLerp: (p1: Vec2d, p2: Vec2d, d: number): Vec2d => {
+        return new Vec2d(
+            MyMath.lerp(p1.x, p2.x, d),
+            MyMath.lerp(p1.y, p2.y, d));
+    },
+    resolveDirOverBoard: (dir: Vec2d, over: IBoardOver, rule: (dir: Vec2d) => void): void => {
+        if (over.overH) {
+            dir.y = over.overH * Math.abs(dir.y);
+            if (over.overH === -1) {
+                rule(dir);
+            }
         }
-    }
+        if (over.overW) {
+            dir.x = over.overW * Math.abs(dir.x);
+        }
+    },
 }
 
 export default MyMath;

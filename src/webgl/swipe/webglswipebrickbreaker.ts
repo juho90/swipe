@@ -1,3 +1,4 @@
+import BottomDropField from '../../game/swipe/bottomdropfield';
 import BreakableBrick from '../../game/swipe/breakablebrick';
 import SwipeBrickBreaker from '../../game/swipe/swipebrickbreaker';
 import PixelShader from '../default.x-fragment';
@@ -9,6 +10,7 @@ export default class WebGLSwipeBrickBreaker {
     public text2d: Text2D;
     public gl: WebGL;
     public swipe: SwipeBrickBreaker;
+    public field: BottomDropField;
     public proj: number[];
     public world: number[];
 
@@ -16,7 +18,7 @@ export default class WebGLSwipeBrickBreaker {
         this.gl = new WebGL;
     }
 
-    public init(text2d: Text2D, gl: WebGL, swipe: SwipeBrickBreaker): void {
+    public init(text2d: Text2D, gl: WebGL, swipe: SwipeBrickBreaker, field: BottomDropField): void {
         gl.registerProgram("swipe", VertexShader, PixelShader, ["proj", "world"]);
         gl.registerShape("brick",
             [
@@ -47,6 +49,7 @@ export default class WebGLSwipeBrickBreaker {
         this.text2d = text2d;
         this.gl = gl;
         this.swipe = swipe;
+        this.field = field;
         this.proj = [
             2 / swipe.w, 0, 0, 0,
             0, -2 / swipe.h, 0, 0,
@@ -86,7 +89,7 @@ export default class WebGLSwipeBrickBreaker {
         this.world[13] = this.swipe.gun.y + this.swipe.gun.r;
         this.gl.setUniformMatrix4fv("world", this.world);
         this.gl.drawLine();
-        this.swipe.field.chips.forEach(element => {
+        this.field.chips.forEach(element => {
             this.world[12] = element.pos.x;
             this.world[13] = element.pos.y;
             this.gl.setUniformMatrix4fv("world", this.world);

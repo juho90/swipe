@@ -1,20 +1,19 @@
-import BottomDropField from './bottomdropfield';
+import Brick from '../brick';
 import BreakableBrick from './breakablebrick';
 import FlowdownBoard from './flowdownboard';
 import Machinegun from './machinegun';
 
 export default class SwipeBrickBreaker {
     public board: FlowdownBoard;
-    public field: BottomDropField;
     public gun: Machinegun;
     public w: number;
     public h: number;
+    public onBrokenBrick: (brick: Brick) => void;
 
     constructor(w: number, h: number, cell: number) {
         this.w = w;
         this.h = h;
-        this.board = new FlowdownBoard(w / cell, h / cell, cell);
-        this.field = new BottomDropField(this.h - cell);
+        this.board = new FlowdownBoard(w, h, cell);
         this.gun = new Machinegun;
         this.gun.setMM(cell / 8);
         this.gun.setPos(
@@ -24,7 +23,7 @@ export default class SwipeBrickBreaker {
     }
 
     public checkLimitLine(): boolean {
-        return this.board.bricks[this.board.h - 1].find((element) => {
+        return this.board.bricks[this.board.column - 1].find((element) => {
             return element !== null;
         }) !== undefined;
     }
@@ -36,16 +35,13 @@ export default class SwipeBrickBreaker {
     }
 
     public update(dtime: number): void {
-        this.field.update(dtime);
         this.gun.update(dtime);
         this.board.detect<BreakableBrick>(brick => {
             for (const ball of this.gun.balls) {
                 if (ball.boundWithBrick(brick) === true) {
                     brick.break();
                     if (brick.usable() !== true) {
-                        this.field.addAuto(
-                            brick.center(),
-                            { type: 0, id: 0 });
+                        this.onBrokenBrick(brick);
                         return false;
                     }
                 }

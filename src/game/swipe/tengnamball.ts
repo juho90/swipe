@@ -40,23 +40,11 @@ export default class Tengnamball extends Ball {
     }
 
     public boundWithBoard(w: number, h: number): boolean {
-        const over = MyMath.collisionBoardWithBall(w, h, this);
-        if (over.overH === -1) {
-            this.stop();
-            return true;
-        }
-        else {
-            let result: boolean = false;
-            if (over.overW) {
-                this.dir.x = over.overW * Math.abs(this.dir.x);
-                result = true;
-            }
-            if (over.overH) {
-                this.dir.y = over.overH * Math.abs(this.dir.y);
-                result = true;
-            }
-            return result;
-        }
+        const over = MyMath.collisionBoardWithBall(w, h, this, this.r);
+        MyMath.resolveDirOverBoard(this.dir, over, dir => {
+            dir.zero();
+        });
+        return over.overW !== 0 || over.overH !== 0;
     }
 
     public update(dtime: number): void {

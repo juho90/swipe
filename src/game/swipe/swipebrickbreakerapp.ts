@@ -1,9 +1,11 @@
 import FiniteStateMachine from '../finitestatemachine';
+import BottomDropField from './bottomdropfield';
 import SwipeBrickBreaker from './swipebrickbreaker';
 
 export default class SwipeBrickBreakerApp {
     public level: number;
     public swipe: SwipeBrickBreaker;
+    public field: BottomDropField;
     public fsm: FiniteStateMachine;
     public endGame: boolean;
     public dtime: number;
@@ -18,6 +20,12 @@ export default class SwipeBrickBreakerApp {
         this.fsm.register("run", this.run.bind(this));
         this.fsm.register("end", this.end.bind(this));
         this.fsm.register("next", this.next.bind(this));
+        this.field = new BottomDropField(w, h);
+        this.swipe.onBrokenBrick = (brick => {
+            this.field.addAuto(
+                brick.center(),
+                { type: 0, id: 0 });
+        });
         this.endGame = false;
         this.dtime = 0;
         this.fsm.set("ready");
@@ -32,6 +40,7 @@ export default class SwipeBrickBreakerApp {
 
     public doUpdate(dtime: number): void {
         this.dtime = dtime;
+        this.field.update(dtime);
         this.fsm.update();
     }
 

@@ -5,12 +5,16 @@ export default class Board {
     public cell: number;
     public w: number;
     public h: number;
+    public row: number;
+    public column: number;
 
     constructor(w: number, h: number, cell: number) {
-        this.bricks = new Array(h);
-        this.bricks.fill(new Array(w), 0, h);
+        this.row = w / cell;
+        this.column = h / cell;
+        this.bricks = new Array(this.column);
+        this.bricks.fill(new Array(this.row), 0, this.column);
         this.bricks.forEach(element => {
-            element.fill(null, 0, w);
+            element.fill(null, 0, this.row);
         });
         this.cell = cell;
         this.w = w;

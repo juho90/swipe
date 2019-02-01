@@ -6,8 +6,8 @@ export default class FlowdownBoard extends Board {
     public genFlowdown(skin: number): void {
         this.flowdown();
         const line = MyMath.genRandomNumbers(
-            1 + Math.floor(Math.random() * (this.w - 1)),
-            0, this.w);
+            1 + Math.floor(Math.random() * (this.row - 1)),
+            0, this.row);
         line.forEach(element => {
             this.add(new BreakableBrick(skin), element, 0);
         });
@@ -22,7 +22,7 @@ export default class FlowdownBoard extends Board {
                 }
             });
         });
-        this.bricks.unshift(new Array(this.w));
-        this.bricks[0].fill(null, 0, this.w);
+        this.bricks.unshift(new Array(this.row));
+        this.bricks[0].fill(null, 0, this.row);
     }
 }

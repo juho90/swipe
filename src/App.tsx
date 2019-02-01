@@ -48,7 +48,7 @@ class App extends React.Component<{}, IState> {
     }
     this.text2d.init(this.overCanvas);
     this.webgl.init(this.underCanvas);
-    this.swipeGL.init(this.text2d, this.webgl, this.swipeGame.swipe);
+    this.swipeGL.init(this.text2d, this.webgl, this.swipeGame.swipe, this.swipeGame.field);
     this.componentWillUpdate();
   }
 

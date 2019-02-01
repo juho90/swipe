@@ -1,21 +1,17 @@
-import IPos2d from './pos2d';
+import Vec2d from './vec2d';
 
-export default class Ball implements IPos2d {
+export default class Ball extends Vec2d {
     public r: number;
-    public x: number;
-    public y: number;
 
     constructor(r: number = 0, x: number = 0, y: number = 0) {
+        super(x, y);
         this.r = r;
-        this.x = x;
-        this.y = y;
     }
 
-    public center(): IPos2d {
-        return {
-            x: this.x + this.r,
-            y: this.y + this.r
-        }
+    public center(): Vec2d {
+        return new Vec2d(
+            this.x + this.r,
+            this.y + this.r);
     }
 
     public draw(ctx: CanvasRenderingContext2D): void {
