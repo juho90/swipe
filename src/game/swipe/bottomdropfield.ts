@@ -13,7 +13,7 @@ export default class BottomDropField extends Field {
         super();
         this.w = w;
         this.h = h;
-        this.r = 1;
+        this.r = 3;
     }
 
     public addAuto(p: Vec2d, item: IItem): void {

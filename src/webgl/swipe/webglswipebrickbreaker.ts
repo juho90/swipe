@@ -20,32 +20,51 @@ export default class WebGLSwipeBrickBreaker {
 
     public init(text2d: Text2D, gl: WebGL, swipe: SwipeBrickBreaker, field: BottomDropField): void {
         gl.registerProgram("swipe", VertexShader, PixelShader, ["proj", "world"]);
-        gl.registerShape("brick",
-            [
-                0, 0,
-                swipe.board.cell, 0,
-                swipe.board.cell, swipe.board.cell,
-                0, swipe.board.cell
-            ],
-            [
-                0, 1,
-                1, 2,
-                2, 3,
-                3, 0
-            ]);
-        const count = 50;
-        const vertices: number[] = [];
-        const indices: number[] = [];
-        for (let index = 0; index < count; ++index) {
-            const angle = index / count * (2.0 * Math.PI);
-            vertices.push(swipe.gun.r * Math.cos(angle));
-            vertices.push(swipe.gun.r * Math.sin(angle));
-            indices.push(index);
-            indices.push(index + 1);
+        {
+            gl.registerShape("brick",
+                [
+                    0, 0,
+                    swipe.board.cell, 0,
+                    swipe.board.cell, swipe.board.cell,
+                    0, swipe.board.cell
+                ],
+                [
+                    0, 1,
+                    1, 2,
+                    2, 3,
+                    3, 0
+                ]);
         }
-        indices[vertices.length - 2] = count - 1;
-        indices[vertices.length - 1] = 0;
-        gl.registerShape("circle", vertices, indices);
+        {
+            const count = 50;
+            const vertices: number[] = [];
+            const indices: number[] = [];
+            for (let index = 0; index < count; ++index) {
+                const angle = index / count * (2.0 * Math.PI);
+                vertices.push(swipe.gun.r * Math.cos(angle));
+                vertices.push(swipe.gun.r * Math.sin(angle));
+                indices.push(index);
+                indices.push(index + 1);
+            }
+            indices[vertices.length - 2] = count - 1;
+            indices[vertices.length - 1] = 0;
+            gl.registerShape("circle", vertices, indices);
+        }
+        {
+            const count = 5;
+            const vertices: number[] = [];
+            const indices: number[] = [];
+            vertices.push(0);
+            vertices.push(0);
+            for (let index = 0; index < count; ++index) {
+                const angle = index / count * (2.0 * Math.PI);
+                vertices.push(field.r * Math.cos(angle));
+                vertices.push(field.r * Math.sin(angle));
+                indices.push(0);
+                indices.push(index + 1);
+            }
+            gl.registerShape("star", vertices, indices);
+        }
         this.text2d = text2d;
         this.gl = gl;
         this.swipe = swipe;
@@ -75,7 +94,7 @@ export default class WebGLSwipeBrickBreaker {
                 this.world[12] = brick.x;
                 this.world[13] = brick.y;
                 this.gl.setUniformMatrix4fv("world", this.world);
-                this.gl.drawLine();
+                this.gl.drawShape();
             });
         });
         this.gl.useShape("circle", "position", 2);
@@ -83,17 +102,18 @@ export default class WebGLSwipeBrickBreaker {
             this.world[12] = element.x + element.r;
             this.world[13] = element.y + element.r;
             this.gl.setUniformMatrix4fv("world", this.world);
-            this.gl.drawLine();
+            this.gl.drawShape();
         });
         this.world[12] = this.swipe.gun.x + this.swipe.gun.r;
         this.world[13] = this.swipe.gun.y + this.swipe.gun.r;
         this.gl.setUniformMatrix4fv("world", this.world);
-        this.gl.drawLine();
+        this.gl.drawShape();
+        this.gl.useShape("star", "position", 2);
         this.field.chips.forEach(element => {
             this.world[12] = element.pos.x;
             this.world[13] = element.pos.y;
             this.gl.setUniformMatrix4fv("world", this.world);
-            this.gl.drawLine();
+            this.gl.drawShape();
         });
     }
 

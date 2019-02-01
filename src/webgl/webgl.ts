@@ -123,11 +123,11 @@ export default class WebGL {
         this.gl.clear(WebGLRenderingContext.COLOR_BUFFER_BIT | WebGLRenderingContext.DEPTH_BUFFER_BIT);
     }
 
-    public drawLine(): void {
+    public drawShape(): void {
         this.gl.drawElements(
-            this.gl.LINES,
-            this.currentShape.ivb.vertexBufferSize,
-            this.gl.UNSIGNED_SHORT,
+            WebGLRenderingContext.LINES,
+            this.currentShape.iib.indexBufferSize,
+            WebGLRenderingContext.UNSIGNED_SHORT,
             0);
     }
 
