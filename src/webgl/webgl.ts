@@ -19,6 +19,18 @@ interface IShape {
 }
 
 export default class WebGL {
+    public static translate(matrix: number[], x?: number, y?: number, z?: number) {
+        matrix[12] = x !== undefined ? x : 0;
+        matrix[13] = y !== undefined ? y : 0;
+        matrix[14] = z !== undefined ? z : 0;
+    }
+
+    public static scale(matrix: number[], x?: number, y?: number, z?: number) {
+        matrix[0] = x !== undefined ? x : 1;
+        matrix[5] = y !== undefined ? y : 1;
+        matrix[10] = z !== undefined ? z : 1;
+    }
+
     public canvas: HTMLCanvasElement;
     public gl: WebGLRenderingContext;
     public programMap: {};

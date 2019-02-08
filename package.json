@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
+    "@types/matter-js": "^0.10.2",
+    "matter-js": "^0.14.2",
+    "react": "^16.8.1",
+    "react-dom": "^16.8.1",
     "react-scripts-ts": "3.1.0"
   },
   "scripts": {
@@ -14,10 +16,10 @@
     "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.11",
-    "@types/node": "^10.12.18",
-    "@types/react": "^16.7.18",
-    "@types/react-dom": "^16.0.11",
-    "typescript": "^3.2.2"
+    "@types/jest": "^23.3.14",
+    "@types/node": "^10.12.23",
+    "@types/react": "^16.8.2",
+    "@types/react-dom": "^16.8.0",
+    "typescript": "^3.3.3"
   }
 }

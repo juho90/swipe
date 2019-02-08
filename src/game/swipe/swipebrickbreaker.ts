@@ -1,60 +1,59 @@
-import Brick from '../brick';
-import BreakableBrick from './breakablebrick';
-import FlowdownBoard from './flowdownboard';
-import Machinegun from './machinegun';
+import * as Matter from 'matter-js';
+import Physics2D from '../physics2d';
+
+interface IBrick {
+    id: number;
+    skin: number;
+    size: number;
+}
 
 export default class SwipeBrickBreaker {
-    public board: FlowdownBoard;
-    public gun: Machinegun;
+    public static genRandoms(min: number, max: number): number[] {
+        const line: number[] = [];
+        const limit = Math.abs(max - min);
+        const count = 1 + Math.floor(Math.random() * (limit - 1));
+        const tmin = Math.min(min, max);
+        for (let index = 0; index < count;) {
+            const value = tmin + Math.floor((Math.random() * limit));
+            if (line.find((element: number) => {
+                return element === value;
+            }) === undefined) {
+                ++index;
+                line.push(value);
+            }
+        }
+        return line;
+    }
+
     public w: number;
     public h: number;
-    public onBrokenBrick: (brick: Brick) => void;
+    public bricks: Map<IBrick, Matter.Body>;
+    public balls: Map<IBrick, Matter.Body>;
+    public stones: Map<IBrick, Matter.Body>;
+    public gunX: number;
+    public gunY: number;
 
-    constructor(w: number, h: number, cell: number) {
+    constructor(w: number, h: number) {
         this.w = w;
         this.h = h;
-        this.board = new FlowdownBoard(w, h, cell);
-        this.gun = new Machinegun;
-        this.gun.setMM(cell / 8);
-        this.gun.setPos(
-            (w / 2) + this.gun.r,
-            h - ((this.gun.r * 2) + 3));
-        this.gun.setMagazine(20);
+        this.bricks = new Map;
+        this.balls = new Map;
+        this.stones = new Map;
     }
 
-    public checkLimitLine(): boolean {
-        return this.board.bricks[this.board.column - 1].find((element) => {
-            return element !== null;
-        }) !== undefined;
-    }
-
-    public checkMovingBall(): boolean {
-        return this.gun.balls.find(element => {
-            return element.dir.x !== 0 || element.dir.y !== 0;
-        }) !== undefined;
-    }
-
-    public update(dtime: number): void {
-        this.gun.update(dtime);
-        this.board.detect<BreakableBrick>(brick => {
-            for (const ball of this.gun.balls) {
-                if (ball.boundWithBrick(brick) === true) {
-                    brick.break();
-                    if (brick.usable() !== true) {
-                        this.onBrokenBrick(brick);
-                        return false;
-                    }
-                }
-            }
-            return true;
-        });
-        this.gun.balls.forEach(element => {
-            element.boundWithBoard(this.w, this.h);
+    public dropBricks(deep: number): void {
+        this.bricks.forEach(value => {
+            Matter.Body.setPosition(value, { x: value.position.x, y: value.position.y + deep });
         });
     }
 
-    public draw(ctx: CanvasRenderingContext2D): void {
-        this.board.draw(ctx);
-        this.gun.draw(ctx);
+    public genBricks(physics: Physics2D, skin: number, size: number): void {
+        const line = SwipeBrickBreaker.genRandoms(0, Math.floor(this.w / size));
+        line.forEach(element => {
+            const brick = { id: 0, skin, size };
+            const body = physics.addBox(element * size, 0, size, size, true, "brick");
+            body.id = brick.id;
+            this.bricks.set(brick, body);
+        });
     }
 }

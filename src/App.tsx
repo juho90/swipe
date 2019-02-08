@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { setTimeout } from 'timers';
 import './App.css';
-import SwipeBrickBreakerApp from './game/swipe/swipebrickbreakerapp';
+import AppSwipeBrickBreaker from './game/swipe/appswipebrickbreaker';
 import WebGLSwipeBrickBreaker from './webgl/swipe/webglswipebrickbreaker';
 import Text2D from './webgl/text2d';
 import WebGL from './webgl/webgl';
@@ -16,7 +16,7 @@ interface IState {
 class App extends React.Component<{}, IState> {
   public underCanvas: HTMLCanvasElement | null;
   public overCanvas: HTMLCanvasElement | null;
-  public swipeGame: SwipeBrickBreakerApp;
+  public swipeGame: AppSwipeBrickBreaker;
   public text2d: Text2D;
   public webgl: WebGL;
   public swipeGL: WebGLSwipeBrickBreaker;
@@ -28,7 +28,7 @@ class App extends React.Component<{}, IState> {
       ratio: 1,
       width: 600,
     };
-    this.swipeGame = new SwipeBrickBreakerApp;
+    this.swipeGame = new AppSwipeBrickBreaker;
     this.swipeGame.init(
       this.state.width,
       this.state.height,
@@ -48,7 +48,7 @@ class App extends React.Component<{}, IState> {
     }
     this.text2d.init(this.overCanvas);
     this.webgl.init(this.underCanvas);
-    this.swipeGL.init(this.text2d, this.webgl, this.swipeGame.swipe, this.swipeGame.field);
+    this.swipeGL.init(this.text2d, this.webgl, this.swipeGame.swipe);
     this.componentWillUpdate();
   }
 
