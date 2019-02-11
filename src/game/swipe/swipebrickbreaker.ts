@@ -1,4 +1,4 @@
-import * as Matter from 'matter-js';
+import * as P2 from 'p2';
 import Physics2D from '../physics2d';
 
 export interface IBrick {
@@ -32,9 +32,9 @@ export default class SwipeBrickBreaker {
 
     public w: number;
     public h: number;
-    public bricks: Map<IBrick, Matter.Body>;
-    public balls: Map<IBall, Matter.Body>;
-    public stones: Map<IBrick, Matter.Body>;
+    public bricks: Map<IBrick, P2.Body>;
+    public balls: Map<IBall, P2.Body>;
+    public stones: Map<IBrick, P2.Body>;
     public gunX: number;
     public gunY: number;
     public gunSize: number;
@@ -51,23 +51,37 @@ export default class SwipeBrickBreaker {
         this.stones = new Map;
     }
 
+    public genBoard(physics: Physics2D): void {
+        physics.addBorder(0, 0, this.w, this.h, 50, {
+            filter: "board",
+            collisionResponse: true,
+            mass: 0,
+            isStatic: true
+        });
+    }
+
     public genBalls(physics: Physics2D, balls: IBall[]): void {
         balls.forEach(element => {
             const pos = this.getBasePosOfBall(element.size);
-            const body = physics.addCircle("ball", pos.x, pos.y, element.size, { isStatic: true });
+            const body = physics.addCircle(pos.x, pos.y, element.size, {
+                filter: "ball",
+                collisionResponse: true,
+                mass: 1,
+                isStatic: false
+            });
             body.id = element.id;
             this.balls.set(element, body);
         });
     }
 
-    public shootBalls(fps: number, target: Matter.Vector): void {
-        const dir = Matter.Vector.normalise({ x: target.x - this.gunX, y: target.y - this.gunY });
+    public shootBalls(fps: number, target: number[]): void {
+        const dir: number[] = [];
+        P2.vec2.normalize(dir, [target[0] - this.gunX, target[1] - this.gunY]);
         let count = 0;
         this.balls.forEach((value) => {
             setTimeout((args: any[]) => {
-                const ball: Matter.Body = args[0];
-                Matter.Body.setStatic(ball, false);
-                Matter.Body.setVelocity(ball, args[1]);
+                const ball: P2.Body = args[0];
+                P2.vec2.copy(ball.velocity, args[1]);
             }, count++ / fps, [value, dir]);
         });
     }
@@ -76,7 +90,12 @@ export default class SwipeBrickBreaker {
         const line = SwipeBrickBreaker.genRandoms(0, Math.floor(this.w / size));
         line.forEach(element => {
             const brick = { id: 0, skin, size };
-            const body = physics.addBox("brick", element * size, 0, size, size, { isStatic: true });
+            const body = physics.addBox(element * size, 0, size, size, {
+                filter: "brick",
+                collisionResponse: true,
+                mass: 1,
+                isStatic: true
+            });
             body.id = brick.id;
             this.bricks.set(brick, body);
         });
@@ -84,7 +103,7 @@ export default class SwipeBrickBreaker {
 
     public dropBricks(deep: number): void {
         this.bricks.forEach(value => {
-            Matter.Body.setPosition(value, { x: value.position.x, y: value.position.y + deep });
+            value.position[1] = value.position[1] + deep;
         });
     }
 

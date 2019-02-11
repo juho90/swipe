@@ -3,46 +3,41 @@ import Physics2D from '../physics2d';
 import SwipeBrickBreaker from './swipebrickbreaker';
 
 export enum Category {
-    BOARD = 2,
-    BRICK = 4,
-    BALL = 8,
-    STONE = 16
+    BOARD = 0x02,
+    BRICK = 0x04,
+    BALL = 0x08,
+    STONE = 0x10
 };
 
 export default class AppSwipeBrickBreaker {
     public level: number;
     public cell: number;
-    public swipe: SwipeBrickBreaker;
     public physics: Physics2D;
+    public swipe: SwipeBrickBreaker;
     public fsm: FiniteStateMachine;
     public endGame: boolean;
     public dtime: number;
 
     public init(w: number, h: number, cell: number): void {
         this.cell = cell;
-        this.swipe = new SwipeBrickBreaker(w, h);
         this.physics = new Physics2D;
-        this.physics.registerCategory("board", {
-            category: Category.BOARD,
-            mask: 0,
-            group: 1
+        this.physics.registerFilter("board", {
+            group: Category.BOARD,
+            mask: Category.BRICK | Category.BALL | Category.STONE
         });
-        this.physics.registerCategory("brick", {
-            category: Category.BRICK,
-            mask: 0,
-            group: 1
+        this.physics.registerFilter("brick", {
+            group: Category.BRICK,
+            mask: Category.BOARD | Category.BALL
         });
-        this.physics.registerCategory("ball", {
-            category: Category.BALL,
-            mask: 0,
-            group: 1
+        this.physics.registerFilter("ball", {
+            group: Category.BALL,
+            mask: Category.BOARD | Category.BRICK
         });
-        this.physics.registerCategory("stone", {
-            category: Category.STONE,
-            mask: Category.BOARD,
-            group: 1
+        this.physics.registerFilter("stone", {
+            group: Category.STONE,
+            mask: Category.BOARD
         });
-        this.physics.addBorder("board", 0, 0, w, h, 50);
+        this.swipe = new SwipeBrickBreaker(w, h);
         this.fsm = new FiniteStateMachine;
         this.fsm.onEnterState = this.onEnterState.bind(this);
         this.fsm.register("reset", this.reset.bind(this));
@@ -56,15 +51,15 @@ export default class AppSwipeBrickBreaker {
 
     public doShot(x: number, y: number): void {
         if (this.fsm.currentState === "ready") {
-            this.swipe.shootBalls(30, { x, y });
+            this.swipe.shootBalls(30, [x, y]);
             this.fsm.set("run");
         }
     }
 
     public doUpdate(dtime: number): void {
         this.dtime = dtime;
-        this.physics.update(dtime);
         this.fsm.update();
+        this.physics.update(this.dtime);
     }
 
     private onEnterState(state: any): void {

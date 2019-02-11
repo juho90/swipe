@@ -25,14 +25,14 @@ class App extends React.Component<{}, IState> {
     super(props);
     this.state = {
       etime: 0,
-      height: 800,
+      height: 810,
       ratio: 1,
-      width: 600,
+      width: 610,
     };
     this.swipeGame = new AppSwipeBrickBreaker;
     this.swipeGame.init(
-      this.state.width,
-      this.state.height,
+      this.state.width - 10,
+      this.state.height - 10,
       40);
     this.text2d = new Text2D;
     this.webgl = new WebGL;
