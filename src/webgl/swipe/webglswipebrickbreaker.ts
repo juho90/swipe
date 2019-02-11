@@ -95,7 +95,8 @@ export default class WebGLSwipeBrickBreaker {
             this.gl.setUniformMatrix4fv("world", this.world);
             this.gl.drawShape();
         });
-        WebGL.translate(this.world, this.swipe.gunX, this.swipe.gunY);
+        WebGL.translate(this.world, this.swipe.gunX, this.swipe.gunY)
+        WebGL.scale(this.world, this.swipe.gunSize, this.swipe.gunSize);
         this.gl.setUniformMatrix4fv("world", this.world);
         this.gl.drawShape();
         this.gl.useShape("star", "position", 2);
@@ -108,13 +109,14 @@ export default class WebGLSwipeBrickBreaker {
     }
 
     public drawText(): void {
-        this.text2d.setTextSize(16);
+        const fontSize = 16;
+        this.text2d.setTextSize(fontSize);
         this.text2d.setTextColor("white");
         this.swipe.bricks.forEach((value, key) => {
             this.text2d.drawText(
                 key.skin.toString(),
-                value.position.x + key.size / 2 - 4,
-                value.position.y + key.size / 2 + 4);
+                value.position.x + 1,
+                value.position.y + fontSize + 1);
         });
     }
 }

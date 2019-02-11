@@ -17,32 +17,28 @@ export default class Physics2D {
         this.categorys[category] = collisionFilter;
     }
 
-    public addBorder(x: number, y: number, w: number, h: number, frame: number, category: string = "default"): Matter.Composite {
+    public addBorder(category: string = "default", x: number, y: number, w: number, h: number, frame: number): Matter.Composite {
         const bodies = [
-            this.addBox(x - frame, y - frame, frame, h + frame * 2, true, category),
-            this.addBox(x - frame, y - frame, w + frame * 2, frame, true, category),
-            this.addBox(x + w, y - frame, frame, h + frame * 2, true, category),
-            this.addBox(x - frame, y + h, w + frame * 2, frame, true, category),
+            this.addBox(category, x - frame, y - frame, frame, h + (frame * 2), { isStatic: true }),
+            this.addBox(category, x - frame, y - frame, w + (frame * 2), frame, { isStatic: true }),
+            this.addBox(category, x + w, y - frame, frame, h + (frame * 2), { isStatic: true }),
+            this.addBox(category, x - frame, y + h, w + (frame * 2), frame, { isStatic: true }),
         ];
         const border = Matter.Composite.create({ bodies });
         Matter.World.add(this.engine.world, border);
         return border;
     }
 
-    public addCircle(x: number, y: number, r: number, isStatic: boolean, category: string = "default"): Matter.Body {
-        const circle = Matter.Bodies.circle(x, y, r, {
-            isStatic,
-            collisionFilter: this.categorys[category]
-        });
+    public addCircle(category: string = "default", x: number, y: number, r: number, collisionFilter?: Matter.IChamferableBodyDefinition): Matter.Body {
+        const circle = Matter.Bodies.circle(x, y, r, collisionFilter);
+        circle.collisionFilter = this.categorys[category];
         this.add(circle);
         return circle;
     }
 
-    public addBox(x: number, y: number, w: number, h: number, isStatic: boolean, category: string = "default"): Matter.Body {
-        const box = Matter.Bodies.rectangle(x, y, w, h, {
-            isStatic,
-            collisionFilter: this.categorys[category]
-        });
+    public addBox(category: string = "default", x: number, y: number, w: number, h: number, collisionFilter?: Matter.IChamferableBodyDefinition): Matter.Body {
+        const box = Matter.Bodies.rectangle(x, y, w, h, collisionFilter);
+        box.collisionFilter = this.categorys[category];
         this.add(box);
         return box;
     }
@@ -57,5 +53,25 @@ export default class Physics2D {
 
     public update(dtime: number): void {
         Matter.Engine.update(this.engine, dtime);
+    }
+
+    public clear(): void {
+        Matter.Engine.clear(this.engine);
+    }
+
+    public draw(ctx: CanvasRenderingContext2D): void {
+        const bodies = Matter.Composite.allBodies(this.engine.world);
+        ctx.beginPath();
+        bodies.forEach(element => {
+            const vertices = element.vertices;
+            ctx.moveTo(vertices[0].x, vertices[0].y);
+            for (let index = 1; index < vertices.length; index++) {
+                ctx.lineTo(vertices[index].x, vertices[index].y);
+            }
+            ctx.lineTo(vertices[0].x, vertices[0].y);
+        });
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#999';
+        ctx.stroke();
     }
 };
