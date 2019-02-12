@@ -3,6 +3,7 @@ import * as P2 from 'p2';
 export interface IBodyOptions {
     collisionResponse: boolean;
     filter: string;
+    material: string;
     gravityScale: number;
     isStatic: boolean;
     mass: number;
@@ -14,14 +15,16 @@ export interface ICollisionFilter {
 }
 
 export default class Physics2D {
-    public filters: Map<string, ICollisionFilter>;
     private world: P2.World;
+    private filters: Map<string, ICollisionFilter>;
+    private materials: Map<string, P2.Material>;
 
     constructor() {
         this.filters = new Map([["default", {
             group: 1,
             mask: 0xFFFFFFFF
         }]]);
+        this.materials = new Map;
         this.world = new P2.World;
     }
 
@@ -37,6 +40,33 @@ export default class Physics2D {
         return collisionFilter;
     }
 
+    public registerMaterial(a: string, b: string, r: number): void {
+        if (this.materials.has(a) === false) {
+            this.materials.set(a, new P2.Material(0));
+        }
+        if (this.materials.has(b) === false) {
+            this.materials.set(b, new P2.Material(0));
+        }
+        this.world.addContactMaterial(
+            new P2.ContactMaterial(
+                this.getMaterial(a),
+                this.getMaterial(b),
+                {
+                    restitution: r,
+                    stiffness: Number.MAX_VALUE,
+                    friction: 0
+                }));
+    }
+
+    public getMaterial(material: string): P2.Material {
+        const collisionMaterial = this.materials.get(material);
+        if (collisionMaterial === undefined) {
+            throw new Error("Physics2D not found filter");
+        }
+        return collisionMaterial;
+    }
+
+
     public addBorder(frame: number, x: number, y: number, w: number, h: number, options: IBodyOptions): P2.Body[] {
         const bodies = [
             this.addBox(x - frame, y - frame, frame, h + (frame * 2), options),
@@ -50,17 +80,21 @@ export default class Physics2D {
     public addCircle(x: number, y: number, r: number, options: IBodyOptions): P2.Body {
         const body = new P2.Body({
             mass: options.isStatic === true ? 0 : options.mass,
-            position: [x + r, y + r]
+            position: [x, y]
         });
         const filter = this.getFilter(options.filter);
+        const material = this.getMaterial(options.material);
         const circle = new P2.Circle({
             collisionResponse: true,
             collisionGroup: filter.group,
             collisionMask: filter.mask,
             radius: r
         });
+        circle.material = material;
         body.collisionResponse = options.collisionResponse;
         body.gravityScale = options.gravityScale;
+        body.damping = 0;
+        body.angularDamping = 0;
         body.addShape(circle);
         this.add(body);
         return body;
@@ -72,12 +106,16 @@ export default class Physics2D {
             position: [x + w / 2, y + h / 2]
         });
         const filter = this.getFilter(options.filter);
+        const material = this.getMaterial(options.material);
         const box = new P2.Box({ width: w, height: h });
         box.collisionResponse = true;
         box.collisionGroup = filter.group;
         box.collisionMask = filter.mask;
+        box.material = material;
         body.collisionResponse = options.collisionResponse;
         body.gravityScale = options.gravityScale;
+        body.damping = 0;
+        body.angularDamping = 0;
         body.addShape(box);
         this.add(body);
         return body;

@@ -38,8 +38,8 @@ export default class WebGLSwipeBrickBreaker {
             const indices: number[] = [];
             for (let index = 0; index < count; ++index) {
                 const angle = index / count * (2.0 * Math.PI);
-                vertices.push(Math.cos(angle) - 0.5);
-                vertices.push(Math.sin(angle) - 0.5);
+                vertices.push(Math.cos(angle));
+                vertices.push(Math.sin(angle));
                 indices.push(index);
                 indices.push(index + 1);
             }

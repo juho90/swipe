@@ -2,13 +2,6 @@ import FiniteStateMachine from '../finitestatemachine';
 import Physics2D from '../physics2d';
 import SwipeBrickBreaker from './swipebrickbreaker';
 
-export enum Category {
-    BOARD = 0x02,
-    BRICK = 0x04,
-    BALL = 0x08,
-    STONE = 0x10
-};
-
 export default class AppSwipeBrickBreaker {
     public level: number;
     public cell: number;
@@ -21,23 +14,8 @@ export default class AppSwipeBrickBreaker {
     public init(w: number, h: number, cell: number): void {
         this.cell = cell;
         this.physics = new Physics2D;
-        this.physics.registerFilter("board", {
-            group: Category.BOARD,
-            mask: Category.BRICK | Category.BALL | Category.STONE
-        });
-        this.physics.registerFilter("brick", {
-            group: Category.BRICK,
-            mask: Category.BOARD | Category.BALL
-        });
-        this.physics.registerFilter("ball", {
-            group: Category.BALL,
-            mask: Category.BOARD | Category.BRICK
-        });
-        this.physics.registerFilter("stone", {
-            group: Category.STONE,
-            mask: Category.BOARD
-        });
         this.swipe = new SwipeBrickBreaker(w, h);
+        this.swipe.registerSource(this.physics);
         this.fsm = new FiniteStateMachine;
         this.fsm.onEnterState = this.onEnterState.bind(this);
         this.fsm.register("reset", this.reset.bind(this));
