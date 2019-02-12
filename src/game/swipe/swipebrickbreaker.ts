@@ -1,5 +1,4 @@
-import * as P2 from 'p2';
-import Physics2D from '../physics2d';
+import Physics2D, { P2 } from '../physics2d';
 
 export interface IBrick {
     id: number;

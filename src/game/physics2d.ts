@@ -1,13 +1,13 @@
 import * as P2 from 'p2';
 
-interface IBodyOptions {
+export interface IBodyOptions {
     collisionResponse: boolean;
     filter: string;
     mass: number;
     isStatic: boolean;
 }
 
-interface ICollisionFilter {
+export interface ICollisionFilter {
     group: number;
     mask: number;
 }
@@ -168,3 +168,5 @@ export default class Physics2D {
         }
     }
 };
+
+export { P2 };
