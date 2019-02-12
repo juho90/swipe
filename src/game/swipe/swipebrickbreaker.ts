@@ -74,8 +74,8 @@ export default class SwipeBrickBreaker {
             group: Category.STONE,
             mask: Category.BOARD
         });
-        physics.registerMaterial("board", "ball", 0);
-        physics.registerMaterial("brick", "ball", 0);
+        physics.registerMaterial("board", "ball", 1);
+        physics.registerMaterial("brick", "ball", 1);
         physics.registerMaterial("board", "stone", 0.3);
     }
 
@@ -106,16 +106,16 @@ export default class SwipeBrickBreaker {
         });
     }
 
-    public shootBalls(fps: number, target: number[]): void {
+    public shootBalls(speed: number, fps: number, target: number[]): void {
         const dir: number[] = [];
         P2.vec2.normalize(dir, [target[0] - this.gunX, target[1] - this.gunY]);
-        P2.vec2.multiply(dir, dir, [40, 40]);
+        P2.vec2.multiply(dir, dir, [speed, speed]);
         let count = 0;
         this.balls.forEach((value) => {
             setTimeout((args: any[]) => {
                 const ball: P2.Body = args[0];
                 P2.vec2.copy(ball.velocity, args[1]);
-            }, count++ / fps, [value, dir]);
+            }, fps * count++, [value, dir]);
         });
     }
 

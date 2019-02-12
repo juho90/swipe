@@ -15,7 +15,6 @@ export default class AppSwipeBrickBreaker {
         this.cell = cell;
         this.physics = new Physics2D;
         this.swipe = new SwipeBrickBreaker(w, h);
-        this.swipe.registerSource(this.physics);
         this.fsm = new FiniteStateMachine;
         this.fsm.onEnterState = this.onEnterState.bind(this);
         this.fsm.register("reset", this.reset.bind(this));
@@ -29,7 +28,7 @@ export default class AppSwipeBrickBreaker {
 
     public doShot(x: number, y: number): void {
         if (this.fsm.currentState === "ready") {
-            this.swipe.shootBalls(30, [x, y]);
+            this.swipe.shootBalls(80, 80, [x, y]);
             this.fsm.set("run");
         }
     }
@@ -59,8 +58,13 @@ export default class AppSwipeBrickBreaker {
         this.level = 1;
         this.endGame = false;
         this.physics.clear();
+        this.swipe.registerSource(this.physics);
         this.swipe.genBoard(this.physics);
-        this.swipe.genBalls(this.physics, [{ id: 0, size: this.cell / 8 }]);
+        const balls = [];
+        for (let index = 0; index < 20; index++) {
+            balls.push({ id: index, size: this.cell / 8 });
+        }
+        this.swipe.genBalls(this.physics, balls);
         this.fsm.set("ready");
     }
 

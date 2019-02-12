@@ -53,8 +53,7 @@ export default class Physics2D {
                 this.getMaterial(b),
                 {
                     restitution: r,
-                    stiffness: Number.MAX_VALUE,
-                    friction: 0
+                    stiffness: Number.MAX_VALUE
                 }));
     }
 
@@ -83,19 +82,18 @@ export default class Physics2D {
             position: [x, y]
         });
         const filter = this.getFilter(options.filter);
-        const material = this.getMaterial(options.material);
         const circle = new P2.Circle({
             collisionResponse: true,
             collisionGroup: filter.group,
             collisionMask: filter.mask,
             radius: r
         });
-        circle.material = material;
+        circle.material = this.getMaterial(options.material);
+        body.addShape(circle);
         body.collisionResponse = options.collisionResponse;
         body.gravityScale = options.gravityScale;
         body.damping = 0;
         body.angularDamping = 0;
-        body.addShape(circle);
         this.add(body);
         return body;
     }
@@ -106,17 +104,16 @@ export default class Physics2D {
             position: [x + w / 2, y + h / 2]
         });
         const filter = this.getFilter(options.filter);
-        const material = this.getMaterial(options.material);
         const box = new P2.Box({ width: w, height: h });
         box.collisionResponse = true;
         box.collisionGroup = filter.group;
         box.collisionMask = filter.mask;
-        box.material = material;
+        box.material = this.getMaterial(options.material);
+        body.addShape(box);
         body.collisionResponse = options.collisionResponse;
         body.gravityScale = options.gravityScale;
         body.damping = 0;
         body.angularDamping = 0;
-        body.addShape(box);
         this.add(body);
         return body;
     }
