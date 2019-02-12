@@ -20,10 +20,10 @@ export default class WebGLSwipeBrickBreaker {
         {
             gl.registerShape("brick",
                 [
-                    0, 0,
-                    1, 0,
-                    1, 1,
-                    0, 1
+                    -0.5, -0.5,
+                    0.5, -0.5,
+                    0.5, 0.5,
+                    -0.5, 0.5
                 ],
                 [
                     0, 1,
@@ -38,8 +38,8 @@ export default class WebGLSwipeBrickBreaker {
             const indices: number[] = [];
             for (let index = 0; index < count; ++index) {
                 const angle = index / count * (2.0 * Math.PI);
-                vertices.push(Math.cos(angle));
-                vertices.push(Math.sin(angle));
+                vertices.push(Math.cos(angle) - 0.5);
+                vertices.push(Math.sin(angle) - 0.5);
                 indices.push(index);
                 indices.push(index + 1);
             }
@@ -55,8 +55,8 @@ export default class WebGLSwipeBrickBreaker {
             vertices.push(0);
             for (let index = 0; index < count; ++index) {
                 const angle = index / count * (2.0 * Math.PI);
-                vertices.push(Math.cos(angle));
-                vertices.push(Math.sin(angle));
+                vertices.push(Math.cos(angle) - 0.5);
+                vertices.push(Math.sin(angle) - 0.5);
                 indices.push(0);
                 indices.push(index + 1);
             }

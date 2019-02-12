@@ -54,8 +54,9 @@ export default class SwipeBrickBreaker {
         physics.addBorder(50, 0, 0, this.w, this.h, {
             filter: "board",
             collisionResponse: true,
-            mass: 0,
-            isStatic: true
+            gravityScale: 0,
+            isStatic: true,
+            mass: 0
         });
     }
 
@@ -65,8 +66,9 @@ export default class SwipeBrickBreaker {
             const body = physics.addCircle(pos.x, pos.y, element.size, {
                 filter: "ball",
                 collisionResponse: true,
-                mass: 1,
-                isStatic: false
+                gravityScale: 0,
+                isStatic: false,
+                mass: 1
             });
             body.id = element.id;
             this.balls.set(element, body);
@@ -92,8 +94,9 @@ export default class SwipeBrickBreaker {
             const body = physics.addBox(element * size, 0, size, size, {
                 filter: "brick",
                 collisionResponse: true,
-                mass: 0,
-                isStatic: true
+                gravityScale: 0,
+                isStatic: true,
+                mass: 0
             });
             body.id = brick.id;
             this.bricks.set(brick, body);

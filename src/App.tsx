@@ -15,7 +15,6 @@ interface IState {
 
 class App extends React.Component<{}, IState> {
   public underCanvas: HTMLCanvasElement | null;
-  public underCanvasCtx: CanvasRenderingContext2D;
   public overCanvas: HTMLCanvasElement | null;
   public swipeGame: AppSwipeBrickBreaker;
   public text2d: Text2D;
@@ -47,14 +46,9 @@ class App extends React.Component<{}, IState> {
     if (this.overCanvas === null) {
       throw new Error("App overCanvas is null");
     }
-    const ctx = this.underCanvas.getContext('2d');
-    if (ctx === null) {
-      throw new Error("App ctx of underCanvas is null");
-    }
-    this.underCanvasCtx = ctx;
     this.text2d.init(this.overCanvas);
-    // this.webgl.init(this.underCanvas);
-    // this.swipeGL.init(this.text2d, this.webgl, this.swipeGame.swipe);
+    this.webgl.init(this.underCanvas);
+    this.swipeGL.init(this.text2d, this.webgl, this.swipeGame.swipe);
     this.componentWillUpdate();
   }
 
@@ -76,9 +70,8 @@ class App extends React.Component<{}, IState> {
 
   public render(): JSX.Element {
     if (this.underCanvas != null && this.overCanvas != null) {
-      this.underCanvasCtx.fillStyle = '#fff';
-      this.underCanvasCtx.fillRect(0, 0, this.underCanvas.width, this.underCanvas.height);
-      this.swipeGame.physics.draw(this.underCanvasCtx);
+      this.webgl.begin();
+      this.swipeGL.draw();
     }
     return (
       <div className="App">
