@@ -81,6 +81,7 @@ export default class AppSwipeBrickBreaker {
         this.level = 1;
         this.endGame = false;
         this.physics.clear();
+        this.swipe.genBoard(this.physics);
         this.swipe.genBalls(this.physics, [{ id: 0, size: this.cell / 8 }]);
         this.fsm.set("ready");
     }

@@ -51,7 +51,7 @@ export default class SwipeBrickBreaker {
     }
 
     public genBoard(physics: Physics2D): void {
-        physics.addBorder(0, 0, this.w, this.h, 50, {
+        physics.addBorder(50, 0, 0, this.w, this.h, {
             filter: "board",
             collisionResponse: true,
             mass: 0,
@@ -92,7 +92,7 @@ export default class SwipeBrickBreaker {
             const body = physics.addBox(element * size, 0, size, size, {
                 filter: "brick",
                 collisionResponse: true,
-                mass: 1,
+                mass: 0,
                 isStatic: true
             });
             body.id = brick.id;
