@@ -62,9 +62,11 @@ export default class AppSwipeBrickBreaker {
 
     private run(): void {
         if (this.endGame === true) {
-            return;
+            this.fsm.set("end");
         }
-        this.fsm.set("next");
+        if (this.swipe.boundedBalls() !== true) {
+            this.fsm.set("next");
+        }
     }
 
     private end(): void {

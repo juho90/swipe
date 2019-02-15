@@ -7,6 +7,13 @@ export enum Category {
     STONE = 0x10
 };
 
+export enum Board {
+    LEFT = 1,
+    TOP,
+    RIGHT,
+    BOTTOM
+};
+
 export interface IBrick {
     id: number;
     skin: number;
@@ -60,6 +67,7 @@ export default class SwipeBrickBreaker {
     public gunX: number;
     public gunY: number;
     public gunSize: number;
+    private noBoundedBall: number;
 
     constructor(w: number, h: number, cell: number) {
         this.w = w;
@@ -96,6 +104,8 @@ export default class SwipeBrickBreaker {
         this.physics.registerMaterial("board", "ball", 1);
         this.physics.registerMaterial("brick", "ball", 1);
         this.physics.registerMaterial("board", "stone", 0.3);
+        this.physics.onCollisionEnd = this.onCollisionEnd.bind(this);
+        this.noBoundedBall = 0;
         this.genBoard();
     }
 
@@ -107,7 +117,7 @@ export default class SwipeBrickBreaker {
     public genBalls(count: number): void {
         const balls = [];
         for (let index = 0; index < count; index++) {
-            balls.push({ id: index, stop: true, size: this.cell / 8 });
+            balls.push({ id: 0, stop: true, size: this.cell / 8 });
         }
         balls.forEach(element => {
             const pos = SwipeBrickBreaker.getBasePosOfBall(this.w, this.h, element.size);
@@ -119,12 +129,13 @@ export default class SwipeBrickBreaker {
                 isStatic: false,
                 mass: 1
             });
-            body.id = element.id;
+            element.id = body.id;
             this.balls.set(body, element);
         });
     }
 
     public shootBalls(speed: number, fps: number, target: number[]): void {
+        this.noBoundedBall = this.balls.size;
         const dir: number[] = [];
         P2.vec2.normalize(dir, [target[0] - this.gunX, target[1] - this.gunY]);
         P2.vec2.multiply(dir, dir, [speed, speed]);
@@ -134,7 +145,12 @@ export default class SwipeBrickBreaker {
                 const ball: P2.Body = args[0];
                 P2.vec2.copy(ball.velocity, args[1]);
             }, fps * count++, [key, dir]);
+            value.stop = false;
         });
+    }
+
+    public boundedBalls(): boolean {
+        return 0 < this.noBoundedBall;
     }
 
     private genBoard(): void {
@@ -150,8 +166,8 @@ export default class SwipeBrickBreaker {
 
     private genBricks(skin: number, size: number): void {
         const line = SwipeBrickBreaker.genRandoms(0, Math.floor(this.w / size));
-        line.forEach(element => {
-            const brick = { id: 0, skin, size };
+        line.forEach((element, index) => {
+            const brick = { id: index, skin, size };
             const body = this.physics.addBox(element * size, 0, size, size, {
                 collisionResponse: true,
                 filter: "brick",
@@ -160,7 +176,7 @@ export default class SwipeBrickBreaker {
                 isStatic: true,
                 mass: 1
             });
-            body.id = brick.id;
+            brick.id = body.id;
             this.bricks.set(body, brick);
         });
     }
@@ -169,5 +185,58 @@ export default class SwipeBrickBreaker {
         this.bricks.forEach((value, key) => {
             key.position[1] = key.position[1] + deep;
         });
+    }
+
+    private onCollisionEnd(abody: P2.Body, ashape: P2.Shape, bbody: P2.Body, bshape: P2.Shape): void {
+        const categoryA = ashape.collisionGroup;
+        const categoryB = bshape.collisionGroup;
+        if (categoryA === Category.BALL || categoryB === Category.BALL) {
+            if (categoryA === Category.BALL) {
+                const ball = this.balls.get(abody);
+                if (ball === undefined) {
+                    throw new Error("onCollisionEnd not found ball");
+                }
+                switch (categoryB) {
+                    case Category.BRICK:
+                        {
+                            const brick = this.bricks.get(bbody);
+                            if (brick === undefined) {
+                                throw new Error("onCollisionEnd not found brick");
+                            }
+                            this.onBallWithBrick(ball, brick);
+                            if (brick.skin <= 0) {
+                                this.physics.remove(bbody);
+                                this.bricks.delete(bbody);
+                            }
+                        }
+                        return;
+                    case Category.BOARD:
+                        {
+                            this.onBallWithBoard(ball, bbody.id);
+                            if (ball.stop === true) {
+                                P2.vec2.set(abody.velocity, 0, 0);
+                                this.noBoundedBall--;
+                            }
+                        }
+                        return;
+                    default:
+                        return;
+                }
+            }
+            else {
+                this.onCollisionEnd(bbody, bshape, abody, ashape);
+            }
+            return;
+        }
+    }
+
+    private onBallWithBrick(ball: IBall, brick: IBrick): void {
+        brick.skin--;
+    }
+
+    private onBallWithBoard(ball: IBall, board: number): void {
+        if (board === Board.BOTTOM) {
+            ball.stop = true;
+        }
     }
 }

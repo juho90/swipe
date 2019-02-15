@@ -15,17 +15,20 @@ export interface ICollisionFilter {
 }
 
 export default class Physics2D {
+    public onCollisionEnd: (abody: P2.Body, ashape: P2.Shape, bbody: P2.Body, bshape: P2.Shape) => void;
     private world: P2.World;
     private filters: Map<string, ICollisionFilter>;
     private materials: Map<string, P2.Material>;
 
     constructor() {
+        this.onCollisionEnd = () => { return; };
+        this.world = new P2.World;
+        this.world.on("endContact", this.myOnCollisionEnd, this);
         this.filters = new Map([["default", {
             group: 1,
             mask: 0xFFFFFFFF
         }]]);
         this.materials = new Map;
-        this.world = new P2.World;
     }
 
     public registerFilter(filter: string, collisionFilter: ICollisionFilter): void {
@@ -64,7 +67,6 @@ export default class Physics2D {
         }
         return collisionMaterial;
     }
-
 
     public addBorder(frame: number, x: number, y: number, w: number, h: number, options: IBodyOptions): P2.Body[] {
         const bodies = [
@@ -132,6 +134,13 @@ export default class Physics2D {
 
     private add(body: P2.Body): void {
         this.world.addBody(body);
+    }
+
+    private myOnCollisionEnd(e: any): void {
+        if (e.bodyA.isSensor === true || e.bodyB.isSensor === true) {
+            return;
+        }
+        this.onCollisionEnd(e.bodyA, e.shapeA, e.bodyB, e.shapeB);
     }
 };
 
