@@ -31,8 +31,7 @@ class App extends React.Component<{}, IState> {
         this.swipeGame = new AppSwipeBrickBreaker;
         this.swipeGame.init(
             this.state.width,
-            this.state.height,
-            40);
+            this.state.height);
         this.text2d = new Text2D;
         this.webgl = new WebGL;
         this.swipeGL = new WebGLSwipeBrickBreaker;

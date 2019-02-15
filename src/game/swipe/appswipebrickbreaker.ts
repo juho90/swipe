@@ -1,20 +1,15 @@
 import FiniteStateMachine from '../finitestatemachine';
-import Physics2D from '../physics2d';
 import SwipeBrickBreaker from './swipebrickbreaker';
 
 export default class AppSwipeBrickBreaker {
     public level: number;
-    public cell: number;
-    public physics: Physics2D;
     public swipe: SwipeBrickBreaker;
     public fsm: FiniteStateMachine;
     public endGame: boolean;
     public dtime: number;
 
-    public init(w: number, h: number, cell: number): void {
-        this.cell = cell;
-        this.physics = new Physics2D;
-        this.swipe = new SwipeBrickBreaker(w, h);
+    public init(w: number, h: number): void {
+        this.swipe = new SwipeBrickBreaker(w, h, 40);
         this.fsm = new FiniteStateMachine;
         this.fsm.onEnterState = this.onEnterState.bind(this);
         this.fsm.register("reset", this.reset.bind(this));
@@ -36,14 +31,13 @@ export default class AppSwipeBrickBreaker {
     public doUpdate(dtime: number): void {
         this.dtime = dtime;
         this.fsm.update();
-        this.physics.update(this.dtime);
+        this.swipe.physics.update(this.dtime);
     }
 
     private onEnterState(state: any): void {
         switch (state) {
             case "ready":
-                this.swipe.dropBricks(this.cell);
-                this.swipe.genBricks(this.physics, this.level, this.cell);
+                this.swipe.nextGenBricks(this.level);
                 break;
             case "next":
                 this.level++;
@@ -57,14 +51,8 @@ export default class AppSwipeBrickBreaker {
     private reset(): void {
         this.level = 1;
         this.endGame = false;
-        this.physics.clear();
-        this.swipe.registerSource(this.physics);
-        this.swipe.genBoard(this.physics);
-        const balls = [];
-        for (let index = 0; index < 20; index++) {
-            balls.push({ id: index, size: this.cell / 8 });
-        }
-        this.swipe.genBalls(this.physics, balls);
+        this.swipe.init();
+        this.swipe.genBalls(20);
         this.fsm.set("ready");
     }
 

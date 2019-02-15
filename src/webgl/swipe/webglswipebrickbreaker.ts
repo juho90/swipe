@@ -83,15 +83,15 @@ export default class WebGLSwipeBrickBreaker {
         this.gl.setUniformMatrix4fv("proj", this.proj);
         this.gl.useShape("brick", "position", 2);
         this.swipe.bricks.forEach((value, key) => {
-            WebGL.translate(this.world, value.position[0], value.position[1]);
-            WebGL.scale(this.world, key.size, key.size);
+            WebGL.translate(this.world, key.position[0], key.position[1]);
+            WebGL.scale(this.world, value.size, value.size);
             this.gl.setUniformMatrix4fv("world", this.world);
             this.gl.drawShape();
         });
         this.gl.useShape("circle", "position", 2);
         this.swipe.balls.forEach((value, key) => {
-            WebGL.translate(this.world, value.position[0], value.position[1]);
-            WebGL.scale(this.world, key.size, key.size);
+            WebGL.translate(this.world, key.position[0], key.position[1]);
+            WebGL.scale(this.world, value.size, value.size);
             this.gl.setUniformMatrix4fv("world", this.world);
             this.gl.drawShape();
         });
@@ -101,8 +101,8 @@ export default class WebGLSwipeBrickBreaker {
         this.gl.drawShape();
         this.gl.useShape("star", "position", 2);
         this.swipe.stones.forEach((value, key) => {
-            WebGL.translate(this.world, value.position[0], value.position[1]);
-            WebGL.scale(this.world, key.size, key.size);
+            WebGL.translate(this.world, key.position[0], key.position[1]);
+            WebGL.scale(this.world, value.size, value.size);
             this.gl.setUniformMatrix4fv("world", this.world);
             this.gl.drawShape();
         });
@@ -114,9 +114,9 @@ export default class WebGLSwipeBrickBreaker {
         this.text2d.setTextColor("white");
         this.swipe.bricks.forEach((value, key) => {
             this.text2d.drawText(
-                key.skin.toString(),
-                value.position[0] + 1,
-                value.position[1] + fontSize + 1);
+                value.skin.toString(),
+                key.position[0] + 1,
+                key.position[1] + fontSize + 1);
         });
     }
 }
