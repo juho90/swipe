@@ -10,6 +10,9 @@ export default class AppSwipeBrickBreaker {
 
     public init(w: number, h: number): void {
         this.swipe = new SwipeBrickBreaker(w, h, 40);
+        this.swipe.onDoNotMoveBalls = () => {
+            this.fsm.set("next");
+        };
         this.fsm = new FiniteStateMachine;
         this.fsm.onEnterState = this.onEnterState.bind(this);
         this.fsm.register("reset", this.reset.bind(this));
@@ -41,6 +44,7 @@ export default class AppSwipeBrickBreaker {
                 break;
             case "next":
                 this.level++;
+                this.swipe.reloadBalls();
                 setTimeout((args: any[]) => {
                     const app: AppSwipeBrickBreaker = args[0];
                     app.fsm.set("ready");
@@ -53,6 +57,7 @@ export default class AppSwipeBrickBreaker {
         this.endGame = false;
         this.swipe.init();
         this.swipe.genBalls(20);
+        this.swipe.reloadBalls();
         this.fsm.set("ready");
     }
 
@@ -63,9 +68,6 @@ export default class AppSwipeBrickBreaker {
     private run(): void {
         if (this.endGame === true) {
             this.fsm.set("end");
-        }
-        if (this.swipe.boundedBalls() !== true) {
-            this.fsm.set("next");
         }
     }
 

@@ -71,6 +71,8 @@ class App extends React.Component<{}, IState> {
         if (this.underCanvas != null && this.overCanvas != null) {
             this.webgl.begin();
             this.swipeGL.draw();
+            this.text2d.begin();
+            this.swipeGL.drawText();
         }
         return (
             <div className="App">

@@ -10,9 +10,11 @@ export default class WebGLSwipeBrickBreaker {
     public swipe: SwipeBrickBreaker;
     public proj: number[];
     public world: number[];
+    private shootCount: number;
 
     constructor() {
         this.gl = new WebGL;
+        this.shootCount = 0;
     }
 
     public init(text2d: Text2D, gl: WebGL, swipe: SwipeBrickBreaker): void {
@@ -65,6 +67,12 @@ export default class WebGLSwipeBrickBreaker {
         this.text2d = text2d;
         this.gl = gl;
         this.swipe = swipe;
+        this.swipe.onReloadBalls = count => {
+            this.shootCount = count;
+        };
+        this.swipe.onShootingBall = () => {
+            this.shootCount--;
+        };
         this.proj = [
             2 / swipe.w, 0, 0, 0,
             0, -2 / swipe.h, 0, 0,
@@ -115,8 +123,14 @@ export default class WebGLSwipeBrickBreaker {
         this.swipe.bricks.forEach((value, key) => {
             this.text2d.drawText(
                 value.skin.toString(),
-                key.position[0] + 1,
-                key.position[1] + fontSize + 1);
+                key.position[0] - fontSize / 2,
+                key.position[1] + fontSize / 2);
         });
+        this.text2d.setTextSize(20);
+        this.text2d.drawText("X " +
+            (this.shootCount).toString(),
+            this.swipe.gunX + 20,
+            this.swipe.gunY - 10);
+
     }
 }

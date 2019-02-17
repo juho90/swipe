@@ -57,6 +57,9 @@ export default class SwipeBrickBreaker {
         }
     }
 
+    public onDoNotMoveBalls: () => void;
+    public onReloadBalls: (count: number) => void;
+    public onShootingBall: () => void;
     public w: number;
     public h: number;
     public cell: number;
@@ -67,9 +70,12 @@ export default class SwipeBrickBreaker {
     public gunX: number;
     public gunY: number;
     public gunSize: number;
-    private noBoundedBall: number;
 
     constructor(w: number, h: number, cell: number) {
+        const empty = () => { return; };
+        this.onDoNotMoveBalls = empty;
+        this.onReloadBalls = empty;
+        this.onShootingBall = empty;
         this.w = w;
         this.h = h;
         this.cell = cell;
@@ -105,7 +111,6 @@ export default class SwipeBrickBreaker {
         this.physics.registerMaterial("brick", "ball", 1);
         this.physics.registerMaterial("board", "stone", 0.3);
         this.physics.onCollisionEnd = this.onCollisionEnd.bind(this);
-        this.noBoundedBall = 0;
         this.genBoard();
     }
 
@@ -135,7 +140,6 @@ export default class SwipeBrickBreaker {
     }
 
     public shootBalls(speed: number, fps: number, target: number[]): void {
-        this.noBoundedBall = this.balls.size;
         const dir: number[] = [];
         P2.vec2.normalize(dir, [target[0] - this.gunX, target[1] - this.gunY]);
         P2.vec2.multiply(dir, dir, [speed, speed]);
@@ -144,13 +148,17 @@ export default class SwipeBrickBreaker {
             setTimeout((args: any[]) => {
                 const ball: P2.Body = args[0];
                 P2.vec2.copy(ball.velocity, args[1]);
-            }, fps * count++, [key, dir]);
+                args[2]();
+            }, fps * count++, [key, dir, this.onShootingBall]);
             value.stop = false;
         });
     }
 
-    public boundedBalls(): boolean {
-        return 0 < this.noBoundedBall;
+    public reloadBalls(): void {
+        this.balls.forEach((value, key) => {
+            P2.vec2.set(key.position, this.gunX, this.gunY);
+        });
+        this.onReloadBalls(this.balls.size);
     }
 
     private genBoard(): void {
@@ -201,7 +209,7 @@ export default class SwipeBrickBreaker {
                         {
                             const brick = this.bricks.get(bbody);
                             if (brick === undefined) {
-                                throw new Error("onCollisionEnd not found brick");
+                                return;
                             }
                             this.onBallWithBrick(ball, brick);
                             if (brick.skin <= 0) {
@@ -215,7 +223,12 @@ export default class SwipeBrickBreaker {
                             this.onBallWithBoard(ball, bbody.id);
                             if (ball.stop === true) {
                                 P2.vec2.set(abody.velocity, 0, 0);
-                                this.noBoundedBall--;
+                                const movedBall = Array.from(this.balls.values()).find(value => {
+                                    return value.stop === false;
+                                });
+                                if (movedBall === undefined) {
+                                    this.onDoNotMoveBalls();
+                                }
                             }
                         }
                         return;
