@@ -227,8 +227,10 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 기본적으로 React의 정적 경로는 /static으로 되어있다.
 때문에 React를 배포할 때 Nginx location을 할당하면 css 또는 js를 찾을 수 없다.
 /mylocation/static에서 찾아야 함으로 경로가 다르다.
-그래서 빌드하기 전에 package.json에서 다음을 추가한다.
+그래서 빌드하기 전에 `package.json`에서 다음을 추가한다.
+
 - "homepage": "http://myhost/mylocation"
+
 이 후, React는 css 또는 js를 /mylocation/static에서 탐색한다.
 
 ## Jenkins
