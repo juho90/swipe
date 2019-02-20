@@ -207,31 +207,31 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 설명 : 
 
 - 웹 앱 프로젝트 폴더로 이동
-- 'nginx-swipe.conf' 파일 확인.
-	- *내 설정에 맞게 'nginx-swipe.conf' 파일을 편집.*
-- '/etc/nginx/nginx.conf' 파일 확인.
-	- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/sites-enabled/*' 내용 제거.
-    	- *더 이상 사용되지 않는 설정.*
-	- '/etc/nginx/nginx.conf' 파일의 http 블록에서 'include /etc/nginx/conf.d/*.conf' 내용 추가.
-    	- *기본적으로 포함되어 있지만 없는 경우.*
-    	- *호스트 환경에서 /etc/nginx/conf.d/\*.conf 에 포함된 설정을 사용하겠다는 의미.*
-- /etc/nginx/conf.d/ 디렉토리 검색.
+- `nginx-swipe.conf` 파일 확인.
+    - *내 설정에 맞게 `nginx-swipe.conf` 파일을 편집.*
+- `/etc/nginx/nginx.conf` 파일 확인.
+    - `/etc/nginx/nginx.conf` 파일의 http 블록에서 `include /etc/nginx/sites-enabled/*` 내용 제거.
+        - *더 이상 사용되지 않는 설정.*
+    - `/etc/nginx/nginx.conf` 파일의 http 블록에서 'include /etc/nginx/conf.d/*.conf' 내용 추가.
+        - *기본적으로 포함되어 있지만 없는 경우.*
+        - *호스트 환경에서 `/etc/nginx/conf.d/\*.conf` 에 포함된 설정을 사용하겠다는 의미.*
+- `/etc/nginx/conf.d/` 디렉토리 검색.
     - *이미 사용중인 포트가 있는지 확인.*
-- nginx-swipe.conf 내용을 /etc/nginx/conf.d/ 폴더로 복사.
+- `nginx-swipe.conf` 내용을 `/etc/nginx/conf.d/` 폴더로 복사.
 - 설정을 적용 후 Nginx 재시작.
 
-> nginx.conf 파일 또는 conf.d 디렉토리에 대한 자세한 내용은 docs/Complete-NGINX-Cookbook-2019.pdf 문서 참고.
+> `nginx.conf` 파일 또는 `conf.d` 디렉토리에 대한 자세한 내용은 docs/Complete-NGINX-Cookbook-2019.pdf 문서 참고.
 
 ### In nginx location
 
-기본적으로 React의 정적 경로는 /static으로 되어있다.
+기본적으로 React의 정적 경로는 `/static`으로 되어있다.
 때문에 React를 배포할 때 Nginx location을 할당하면 css 또는 js를 찾을 수 없다.
-/mylocation/static에서 찾아야 함으로 경로가 다르다.
+`/mylocation/static`에서 찾아야 함으로 경로가 다르다.
 그래서 빌드하기 전에 `package.json`에서 다음을 추가한다.
 
 - "homepage": "http://myhost/mylocation"
 
-이 후, React는 css 또는 js를 /mylocation/static에서 탐색한다.
+이 후, React는 css 또는 js를 `/mylocation/static`에서 탐색한다.
 
 ## Jenkins
 
@@ -239,14 +239,14 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 
 명령 :
 
-	# apt-get update
+    # apt-get update
     # apt-get install -y openjdk-8-jre-headless
     # wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add -
     # sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
     # apt-get update
     # apt-get install -y jenkins
-	# /etc/init.d/jenkins start
-	# curl localhost:8080
+    # /etc/init.d/jenkins start
+    # curl localhost:8080
 
 설명 : 
 
@@ -275,11 +275,11 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 
 설명 : 
 
-- /etc/default/jenkins 설정파일에서 Jenkins 실행 파라미티에 --prefix를 포합하도록 수정.
-    1. PREFIX=/$NAME
-    2. NAME=jenkins
-    3. --prefix는 /jenkins와 같다.
-    4. --prefix는 `http://localhost:8080/--prefix`의 역할을 한다.
+- `/etc/default/jenkins` 설정파일에서 Jenkins 실행 파라미티에 `--prefix`를 포합하도록 수정.
+    1. `PREFIX=/$NAME`
+    2. `NAME=jenkins`
+    3. `--prefix`는 `/jenkins`와 같다.
+    4. `--prefix`는 `http://localhost:8080/--prefix`의 역할을 한다.
 - Jenkins 재시작.
 - Nginx 설정을 확인.
 - 설정을 적용 후 Nginx 재시작.
