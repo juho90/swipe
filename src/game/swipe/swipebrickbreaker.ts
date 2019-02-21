@@ -1,18 +1,18 @@
-import Physics2D, { P2 } from '../physics2d';
+import Physics2D, { P2 } from "../physics2d";
 
 export enum Category {
     BOARD = 0x02,
     BRICK = 0x04,
     BALL = 0x08,
     STONE = 0x10
-};
+}
 
 export enum Board {
     LEFT = 1,
     TOP,
     RIGHT,
     BOTTOM
-};
+}
 
 export interface IBrick {
     id: number;
@@ -38,11 +38,13 @@ export default class SwipeBrickBreaker {
         const limit = Math.abs(max - min);
         const count = 1 + Math.floor(Math.random() * (limit - 1));
         const tmin = Math.min(min, max);
-        for (let index = 0; index < count;) {
-            const value = tmin + Math.floor((Math.random() * limit));
-            if (line.find((element: number) => {
-                return element === value;
-            }) === undefined) {
+        for (let index = 0; index < count; ) {
+            const value = tmin + Math.floor(Math.random() * limit);
+            if (
+                line.find((element: number) => {
+                    return element === value;
+                }) === undefined
+            ) {
                 ++index;
                 line.push(value);
             }
@@ -52,9 +54,9 @@ export default class SwipeBrickBreaker {
 
     public static getBasePosOfBall(w: number, h: number, size: number): any {
         return {
-            x: (w / 2) + size,
-            y: h - ((size * 2) + 3)
-        }
+            x: w / 2 + size,
+            y: h - (size * 2 + 3)
+        };
     }
 
     public onReload: (count: number) => void;
@@ -72,26 +74,33 @@ export default class SwipeBrickBreaker {
     public gunY: number;
     public gunSize: number;
 
-    constructor(w: number, h: number, cell: number) {
-        const empty = () => { return; };
+    constructor() {
+        const empty = () => {
+            return;
+        };
         this.onReload = empty;
         this.onShoot = empty;
         this.onBreak = empty;
         this.onEnd = empty;
+        this.w = 0;
+        this.h = 0;
+        this.cell = 0;
+        this.physics = new Physics2D();
+        this.bricks = new Map();
+        this.balls = new Map();
+        this.stones = new Map();
+        this.gunSize = 5;
+        this.gunX = 0;
+        this.gunY = 0;
+    }
+
+    public init(w: number, h: number, cell: number): void {
         this.w = w;
         this.h = h;
         this.cell = cell;
-        this.physics = new Physics2D;
-        this.bricks = new Map;
-        this.balls = new Map;
-        this.stones = new Map;
-        this.gunSize = 5;
-        const pos = SwipeBrickBreaker.getBasePosOfBall(w, h, this.gunSize);
-        this.gunX = pos.x;
-        this.gunY = pos.y;
     }
 
-    public init(): void {
+    public reset() {
         this.physics.clear();
         this.physics.registerFilter("board", {
             group: Category.BOARD,
@@ -114,6 +123,13 @@ export default class SwipeBrickBreaker {
         this.physics.registerMaterial("board", "stone", 0.4);
         this.physics.onCollisionEnd = this.onCollisionEnd.bind(this);
         this.genBoard();
+        const pos = SwipeBrickBreaker.getBasePosOfBall(
+            this.w,
+            this.h,
+            this.gunSize
+        );
+        this.gunX = pos.x;
+        this.gunY = pos.y;
     }
 
     public load(count: number): void {
@@ -122,7 +138,11 @@ export default class SwipeBrickBreaker {
             balls.push({ id: 0, stop: true, size: this.cell / 8 });
         }
         balls.forEach(element => {
-            const pos = SwipeBrickBreaker.getBasePosOfBall(this.w, this.h, element.size);
+            const pos = SwipeBrickBreaker.getBasePosOfBall(
+                this.w,
+                this.h,
+                element.size
+            );
             const body = this.physics.addCircle(pos.x, pos.y, element.size, {
                 collisionResponse: true,
                 filter: "ball",
@@ -144,7 +164,7 @@ export default class SwipeBrickBreaker {
     }
 
     public shoot(speed: number, fps: number, target: number[]): void {
-        const dir: number[] = [];
+        let dir:[number, number] = [0, 0];
         P2.vec2.normalize(dir, [target[0] - this.gunX, target[1] - this.gunY]);
         P2.vec2.multiply(dir, dir, [speed, speed]);
         let count = 0;
@@ -173,8 +193,12 @@ export default class SwipeBrickBreaker {
             isStatic: false,
             mass: 1
         });
-        const dir = [30, 0];
-        P2.vec2.rotate(body.velocity, dir, 225 + Math.floor(Math.random() * 90));
+        const dir:[number, number] = [30, 0];
+        P2.vec2.rotate(
+            body.velocity,
+            dir,
+            225 + Math.floor(Math.random() * 90)
+        );
         stone.id = body.id;
         this.stones.set(body, stone);
     }
@@ -221,7 +245,12 @@ export default class SwipeBrickBreaker {
         });
     }
 
-    private onCollisionEnd(abody: P2.Body, ashape: P2.Shape, bbody: P2.Body, bshape: P2.Shape): void {
+    private onCollisionEnd(
+        abody: P2.Body,
+        ashape: P2.Shape,
+        bbody: P2.Body,
+        bshape: P2.Shape
+    ): void {
         const categoryA = ashape.collisionGroup;
         const categoryB = bshape.collisionGroup;
         if (categoryA === Category.BALL || categoryB === Category.BALL) {
@@ -250,7 +279,9 @@ export default class SwipeBrickBreaker {
                             this.onCollisionBallWithBoard(ball, bbody.id);
                             if (ball.stop === true) {
                                 P2.vec2.set(abody.velocity, 0, 0);
-                                const movedBall = Array.from(this.balls.values()).find(value => {
+                                const movedBall = Array.from(
+                                    this.balls.values()
+                                ).find(value => {
                                     return value.stop === false;
                                 });
                                 if (movedBall === undefined) {
@@ -262,8 +293,7 @@ export default class SwipeBrickBreaker {
                     default:
                         return;
                 }
-            }
-            else {
+            } else {
                 this.onCollisionEnd(bbody, bshape, abody, ashape);
             }
             return;

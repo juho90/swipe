@@ -2,8 +2,8 @@ export default class Text2D {
     public canvas: HTMLCanvasElement;
     public ctx: CanvasRenderingContext2D;
 
-    public init(canvas: HTMLCanvasElement): void {
-        const ctx = canvas.getContext('2d');
+    constructor(canvas: HTMLCanvasElement) {
+        const ctx = canvas.getContext("2d");
         if (ctx === null) {
             throw new Error("This browser doesn't support 2D");
         }

@@ -1,23 +1,23 @@
 export default class FiniteStateMachine {
     public onEnterState: (state: any) => void;
     public onLeaveState: (state: any) => void;
-    public stateMap: {};
+    public stateMap: Map<any, () => void>;
     public currentState: any;
 
     constructor() {
         this.onEnterState = this.empty;
         this.onLeaveState = this.empty;
         this.currentState = undefined;
-        this.stateMap = {};
-        this.stateMap[this.currentState] = this.empty;
+        this.stateMap = new Map();
+        this.stateMap.set(this.currentState, this.empty);
     }
 
     public register(state: any, func: () => void): void {
-        this.stateMap[state] = func;
+        this.stateMap.set(state, func);
     }
 
     public unregister(state: any): void {
-        this.stateMap[state] = this.empty;
+        this.stateMap.set(state, this.empty);
     }
 
     public set(state: any): void {
@@ -29,7 +29,10 @@ export default class FiniteStateMachine {
     }
 
     public update(): void {
-        this.stateMap[this.currentState]();
+        const func = this.stateMap.get(this.currentState);
+        if (func !== undefined) {
+            func();
+        }
     }
 
     public empty(): void {
