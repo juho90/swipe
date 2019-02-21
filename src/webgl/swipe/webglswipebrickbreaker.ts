@@ -57,8 +57,8 @@ export default class WebGLSwipeBrickBreaker {
             vertices.push(0);
             for (let index = 0; index < count; ++index) {
                 const angle = index / count * (2.0 * Math.PI);
-                vertices.push(Math.cos(angle) - 0.5);
-                vertices.push(Math.sin(angle) - 0.5);
+                vertices.push(Math.cos(angle));
+                vertices.push(Math.sin(angle));
                 indices.push(0);
                 indices.push(index + 1);
             }
@@ -67,10 +67,10 @@ export default class WebGLSwipeBrickBreaker {
         this.text2d = text2d;
         this.gl = gl;
         this.swipe = swipe;
-        this.swipe.onReloadBalls = count => {
+        this.swipe.onReload = count => {
             this.shootCount = count;
         };
-        this.swipe.onShootingBall = () => {
+        this.swipe.onShoot = (ball, body) => {
             this.shootCount--;
         };
         this.proj = [

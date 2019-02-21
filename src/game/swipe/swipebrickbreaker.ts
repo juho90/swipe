@@ -57,9 +57,10 @@ export default class SwipeBrickBreaker {
         }
     }
 
-    public onDoNotMoveBalls: () => void;
-    public onReloadBalls: (count: number) => void;
-    public onShootingBall: () => void;
+    public onReload: (count: number) => void;
+    public onShoot: (ball: IBall, body: P2.Body) => void;
+    public onBreak: (brick: IBrick, body: P2.Body) => void;
+    public onEnd: () => void;
     public w: number;
     public h: number;
     public cell: number;
@@ -73,9 +74,10 @@ export default class SwipeBrickBreaker {
 
     constructor(w: number, h: number, cell: number) {
         const empty = () => { return; };
-        this.onDoNotMoveBalls = empty;
-        this.onReloadBalls = empty;
-        this.onShootingBall = empty;
+        this.onReload = empty;
+        this.onShoot = empty;
+        this.onBreak = empty;
+        this.onEnd = empty;
         this.w = w;
         this.h = h;
         this.cell = cell;
@@ -105,21 +107,16 @@ export default class SwipeBrickBreaker {
         });
         this.physics.registerFilter("stone", {
             group: Category.STONE,
-            mask: Category.BOARD
+            mask: Category.BOARD | Category.STONE
         });
         this.physics.registerMaterial("board", "ball", 1);
         this.physics.registerMaterial("brick", "ball", 1);
-        this.physics.registerMaterial("board", "stone", 0.3);
+        this.physics.registerMaterial("board", "stone", 0.4);
         this.physics.onCollisionEnd = this.onCollisionEnd.bind(this);
         this.genBoard();
     }
 
-    public nextGenBricks(skin: number): void {
-        this.dropBricks(this.cell);
-        this.genBricks(skin, this.cell);
-    }
-
-    public genBalls(count: number): void {
+    public load(count: number): void {
         const balls = [];
         for (let index = 0; index < count; index++) {
             balls.push({ id: 0, stop: true, size: this.cell / 8 });
@@ -139,26 +136,55 @@ export default class SwipeBrickBreaker {
         });
     }
 
-    public shootBalls(speed: number, fps: number, target: number[]): void {
+    public reload(): void {
+        this.balls.forEach((value, key) => {
+            P2.vec2.set(key.position, this.gunX, this.gunY);
+        });
+        this.onReload(this.balls.size);
+    }
+
+    public shoot(speed: number, fps: number, target: number[]): void {
         const dir: number[] = [];
         P2.vec2.normalize(dir, [target[0] - this.gunX, target[1] - this.gunY]);
         P2.vec2.multiply(dir, dir, [speed, speed]);
         let count = 0;
         this.balls.forEach((value, key) => {
-            setTimeout((args: any[]) => {
-                const ball: P2.Body = args[0];
-                P2.vec2.copy(ball.velocity, args[1]);
-                args[2]();
-            }, fps * count++, [key, dir, this.onShootingBall]);
+            const func = () => {
+                P2.vec2.copy(key.velocity, dir);
+                this.onShoot(value, key);
+            };
+            setTimeout(func, fps * count++);
             value.stop = false;
         });
     }
 
-    public reloadBalls(): void {
-        this.balls.forEach((value, key) => {
-            P2.vec2.set(key.position, this.gunX, this.gunY);
+    public nextGen(skin: number): void {
+        this.fallBricks(this.cell);
+        this.genBricks(skin, this.cell);
+    }
+
+    public dropItem(item: number, x: number, y: number): void {
+        const stone = { id: 0, item, size: this.cell / 16 };
+        const body = this.physics.addCircle(x, y, stone.size, {
+            collisionResponse: true,
+            filter: "stone",
+            material: "stone",
+            gravityScale: -1,
+            isStatic: false,
+            mass: 1
         });
-        this.onReloadBalls(this.balls.size);
+        const dir = [30, 0];
+        P2.vec2.rotate(body.velocity, dir, 225 + Math.floor(Math.random() * 90));
+        stone.id = body.id;
+        this.stones.set(body, stone);
+    }
+
+    public pickUpItem(onPickUp: (stone: IStone, body: P2.Body) => void): void {
+        this.stones.forEach((value, key, map) => {
+            onPickUp(value, key);
+            this.physics.remove(key);
+            map.delete(key);
+        });
     }
 
     private genBoard(): void {
@@ -189,7 +215,7 @@ export default class SwipeBrickBreaker {
         });
     }
 
-    private dropBricks(deep: number): void {
+    private fallBricks(deep: number): void {
         this.bricks.forEach((value, key) => {
             key.position[1] = key.position[1] + deep;
         });
@@ -211,8 +237,9 @@ export default class SwipeBrickBreaker {
                             if (brick === undefined) {
                                 return;
                             }
-                            this.onBallWithBrick(ball, brick);
+                            this.onCollisionBallWithBrick(ball, brick);
                             if (brick.skin <= 0) {
+                                this.onBreak(brick, bbody);
                                 this.physics.remove(bbody);
                                 this.bricks.delete(bbody);
                             }
@@ -220,14 +247,14 @@ export default class SwipeBrickBreaker {
                         return;
                     case Category.BOARD:
                         {
-                            this.onBallWithBoard(ball, bbody.id);
+                            this.onCollisionBallWithBoard(ball, bbody.id);
                             if (ball.stop === true) {
                                 P2.vec2.set(abody.velocity, 0, 0);
                                 const movedBall = Array.from(this.balls.values()).find(value => {
                                     return value.stop === false;
                                 });
                                 if (movedBall === undefined) {
-                                    this.onDoNotMoveBalls();
+                                    this.onEnd();
                                 }
                             }
                         }
@@ -243,11 +270,11 @@ export default class SwipeBrickBreaker {
         }
     }
 
-    private onBallWithBrick(ball: IBall, brick: IBrick): void {
+    private onCollisionBallWithBrick(ball: IBall, brick: IBrick): void {
         brick.skin--;
     }
 
-    private onBallWithBoard(ball: IBall, board: number): void {
+    private onCollisionBallWithBoard(ball: IBall, board: number): void {
         if (board === Board.BOTTOM) {
             ball.stop = true;
         }

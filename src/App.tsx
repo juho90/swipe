@@ -24,9 +24,9 @@ class App extends React.Component<{}, IState> {
         super(props);
         this.state = {
             etime: 0,
-            height: 800,
+            height: 600,
             ratio: 1,
-            width: 600,
+            width: 480,
         };
         this.swipeGame = new AppSwipeBrickBreaker;
         this.swipeGame.init(
