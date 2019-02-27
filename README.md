@@ -168,6 +168,7 @@ Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 
 명령 :
 
+    # cd home
     # curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
     # apt-get install -y nodejs
     # git clone https://github.com/juho90/swipe.git
@@ -193,7 +194,7 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 
 명령 : 
 
-    # cd swipe
+    # cd /home/swipe
     # cat nginx-swipe.conf
     [edit nginx-swipe.conf for myconfig]
     # cat /etc/nginx/nginx.conf
