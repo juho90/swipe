@@ -1,3 +1,0 @@
-npm run build
-cp ./nginx-swipe.conf /etc/nginx/conf.d/
-nginx -s reload

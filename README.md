@@ -164,6 +164,8 @@ Nginx로 들어온 정보를 React로 보냄으로써 연동이 성립한다.
 
 ## React
 
+> warning! : Jenkins를 사용하는 경우는 지통적 통합 빌드 항목을 참고.
+
 ### 설치
 
 명령 :
@@ -234,9 +236,9 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 
 이 후, React는 css 또는 js를 `/mylocation/static`에서 탐색한다.
 
-## Jenkins
+# Jenkins
 
-### 설치 및 실행
+## 설치 및 실행
 
 명령 :
 
@@ -257,10 +259,25 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 - Jenkins 실행.
 - 설치 후 실행 확인.
 
-### 서비스
+## 서비스
 
 여기서는 Nginx의 프록시 서버 기능을 사용한다.
-그러나 루트 경로엔 이미 웹 앱이 연결되어 있기 때문에 다른 경로를 사용해야 한다.
+
+명령 :
+
+	[install nginx]
+	# cat /etc/nginx/conf.d/default.conf
+	[fill just only 'proxy_pass http://127.0.0.1:8080;' in 'location /' block]
+    # nginx -s reload
+
+설명 : 
+
+- Nginx 설정을 확인.
+- 설정을 적용 후 Nginx 재시작.
+
+### With swipe for nginx
+
+서비스 경로가 겹칠 경우, 다른 경로를 사용해야 한다.
 외부 접속 경로 `http://myhost/jenkins`와 Jenkins 접속 경로 `http://localhost:8080/jenkins`를 중계한다.
 
 명령 :
@@ -268,11 +285,6 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
     # vi /etc/default/jenkins
     [edit JENKINS_ARGS="..." as JENKINS_ARGS="... --prefix=$PREFIX"]
     # service jenkins restart
-    # cd swipe
-    # cat nginx-swipe.conf
-    [edit nginx-swipe.conf for myconfig]
-    # cp ./nginx-swipe.conf /etc/nginx/conf.d/
-    # nginx -s reload
 
 설명 : 
 
@@ -281,11 +293,9 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
     2. `NAME=jenkins`
     3. `--prefix`는 `/jenkins`와 같다.
     4. `--prefix`는 `http://localhost:8080/--prefix`의 역할을 한다.
-- Jenkins 재시작.
-- Nginx 설정을 확인.
 - 설정을 적용 후 Nginx 재시작.
 
-### 시작하기
+## 시작하기
 
 1. Jenkins가 설치되면 브라우저에서 `http://myhost/jenkins`로 접속.
 2. 'Unlock Jenkins' 페이지가 보이면 Jenkins가 설치된 OS 콘솔에서 다음 명령을 입력.
@@ -299,17 +309,80 @@ Nginx가 프록시 서버로서 React와 연동하여 서버스를 구현하는 
 	- *tip : 이 후 다시 설정할 수 있기 때문에 기본 상태 스킵.*
 7. 'Start using Jenkins' 버튼을 클릭하고 Jenkins 시작.
 
-### 프로젝트 생성 및 설정
-
-----------
+## 프로젝트 생성 및 설정
 
 GitHub 특정 브랜치에 소스가 커밋되면 Jenkins가 반응하여 로컬에서 소스를 내려받고 웹 앱을 빌드 및 테스트 후 엔진엑스 서비스 재시작.
 
-#### Webhook
+	플로우 : 커밋 > 트리거(Trigger) > 체크아웃 > 빌드 > 테스트 > 배포 > 서비스
 
-#### 프로젝트 생성
+#### 1. Nojejs plugin 설치
+
+배포할 Swipe가 React이기 때문에 빌드하기 위해 설치.
+
+1. `http://myhost/pluginManager/available`으로 접속.
+2. 'Nodejs Plugin' 설치 및 재시작.
+3. `http://myhost/configureTools/`으로 접속.
+4. 'Nodejs' 항목을 다음과 같이 설정.
+	- Name : nodejs(사용자 정의).
+	- check 'Install automatically'.
+	- Version : NodeJS 11.10.0.
+5. 설정 저장.
+
+#### 2. 프로젝트 생성
+
+소스를 체크아웃하고 빌드 및 테스트 그리고 배포를 위한 설정.
 
 1. '새로운 Item' 메뉴 클릭.
-2. 프로젝트 이름 입력.
-	- *tip : 홈메뉴에 노출된 이름.*
+2. 생성 페이지에서 다음과 같이 작업.
+	- 프로젝트 이름 입력.
+		- *tip : 홈메뉴에 노출된 이름.*
+	- 설정 항목 중 'pipeline' 선택
+	- OK 클릭.
+3. 'Pipeline' 항목에 다음과 같이 입력.
+	- ```	
+    pipeline {
+      agent any
+      tools {nodejs "nodejs"}
+      stages {
+        stage('checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/   master']], doGenerateSubmoduleConfigurations: false,   extensions: [], submoduleCfg: [], userRemoteConfigs: [    [url: 'https://github.com/juho90/swipe']]])
+            }
+        }
+        stage('Preconfiguration') {
+            steps {
+                sh 'npm config ls'
+            }
+        }
+        stage('Install package') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Build') {
+            steps {
+                timeout(time: 3, unit: 'MINUTES') {
+                    sh 'npm run build'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'service nginx stop'
+                sh 'mv -v -f ./build/ /home/swipe/'
+                sh 'cp ./nginx-jenkins-swipe.conf /etc/nginx/conf.d/    default.conf'
+                sh 'service nginx start'
+            }
+        }
+      }
+    }
+    ```
+4. 'Build Now' 클릭.
 
+##### pipeline 내용 요약
+
+1. 저장소로부터 소스를 체크아웃
+2. nodejs 설치 여부 확인
+3. 소스 종속성 패키지 설치
+4. 소스 빌드
+5. 소스 배포

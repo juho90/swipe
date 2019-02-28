@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+  tools {nodejs "nodejs"}
+  stages {
+    stage('checkout') {
+        steps {
+            checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/juho90/swipe']]])
+        }
+    }
+    stage('Preconfiguration') {
+        steps {
+            sh 'npm config ls'
+        }
+    }
+    stage('Install package') {
+      steps {
+        sh 'npm install'
+      }
+    }
+    stage('Build') {
+      steps {
+         timeout(time: 3, unit: 'MINUTES') {
+            retry(5) {
+                sh 'npm run build'
+            }
+         }
+      }
+    }
+    stage('Deploy') {
+        steps {
+            sh 'service nginx stop'
+            sh 'mv -v -f ./build/ /home/swipe/'
+            sh 'cp ./nginx-jenkins-swipe.conf /etc/nginx/conf.d/default.conf'
+            sh 'service nginx start'
+        }
+    }
+  }
+}
